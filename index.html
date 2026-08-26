@@ -19,26 +19,117 @@
   body { font-family: var(--font-mono); background: var(--bg); color: var(--text); padding: 24px; max-width: 1400px; margin: 0 auto; }
   h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
   .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+  .period-partial { display: block; font-weight: 400; font-size: 10px; color: var(--text-muted); }
   .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: flex-end; }
   .control-group { display: flex; flex-direction: column; gap: 4px; }
+  .control-group[hidden] { display: none; }
   .control-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
   select, input[type="date"] { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--text); cursor: pointer; }
   select:focus, input:focus { outline: none; border-color: var(--accent); }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
   .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
   .chart-container { position: relative; height: 350px; }
+  .funnel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+  .funnel-panel { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px 4px; }
+  .funnel-panel h3 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: 0.2px; }
+  .funnel-panel h3 .panel-meta { font-size: 10px; font-weight: 400; color: var(--text-muted); margin-left: 6px; }
+  .funnel-panel .chart-container { height: 280px; }
+  .funnel-trellis-note { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+  .split-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; align-items: center; }
+  .split-pills .split-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-right: 6px; }
+  .split-pill { padding: 5px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); color: var(--text); font-size: 12px; cursor: pointer; font-family: var(--font-mono); transition: background .12s, color .12s, border-color .12s; }
+  .split-pill:hover { background: #f3f4f6; }
+  .split-pill.active { background: var(--text); color: var(--card); border-color: var(--text); }
+  table { border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; white-space: nowrap; }
+  th:first-child, td:first-child { min-width: 220px; }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tr:hover { background: #f9fafb; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-card {
+    padding: 0 !important;
+    overflow-x: auto;
+  }
+  .table-card table { margin: 0; min-width: 100%; }
+  .table-card th:first-child, .table-card td:first-child {
+    z-index: 6 !important;
+    box-shadow: 10px 0 14px -14px rgba(15,23,42,0.45);
+  }
+  .table-card th:first-child { z-index: 8 !important; }
+  .stage-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+  .chart-row { display: flex; gap: 20px; margin-bottom: 20px; }
+  .chart-row .card { margin-bottom: 0; }
+  @media (max-width: 900px) { .chart-row { flex-direction: column; } }
+  .footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .stage-row { cursor: pointer; }
+  .stage-row:hover { background: #f3f4f6; }
+  .sub-row { display: none; }
+  .sub-row.visible { display: table-row; }
+  .expand-toggle { font-size: 10px; color: var(--text-muted); margin-right: 4px; display: inline-block; width: 12px; transition: transform 0.15s; }
+  .expand-toggle.open { transform: rotate(90deg); }
+  /* Inline spinner shown in the toggle slot while a stage's sub-reasons fetch is in flight */
+  .row-spinner { display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: middle; box-sizing: border-box; border: 2px solid var(--border); border-top-color: var(--text-muted); border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .subreason-loading td { color: var(--text-muted); font-size: 12px; font-style: italic; padding: 6px 10px 6px 34px; background: #fafafa; }
+  .expand-btn { padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; background: var(--card); color: var(--text-muted); cursor: pointer; float: right; }
+  .expand-btn:hover { background: #f3f4f6; }
+  .sub-row td.num { font-size: 11px; }
+  .sub-row td.num span { font-size: 9px !important; }
+  .sub-label { display: inline-flex; align-items: center; gap: 6px; }
+  .subreason-info-btn { width: 16px; height: 16px; border: 1px solid var(--border); border-radius: 50%; background: #fff; color: var(--text-muted); font-family: var(--font-mono); font-size: 10px; line-height: 14px; text-align: center; cursor: pointer; padding: 0; flex: 0 0 auto; }
+  .subreason-info-btn:hover, .subreason-info-btn:focus { border-color: var(--text); color: var(--text); background: #f9fafb; outline: none; }
+  .definition-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.22); z-index: 9997; }
+  .definition-backdrop[hidden] { display: none; }
+  .definition-drawer { position: fixed; top: 0; right: 0; width: min(460px, 100vw); height: 100vh; background: var(--card); border-left: 1px solid var(--border); box-shadow: -20px 0 45px rgba(15,23,42,0.16); z-index: 9998; transform: translateX(100%); transition: transform 0.18s ease-out; display: flex; flex-direction: column; }
+  .definition-drawer.open { transform: translateX(0); }
+  .definition-drawer[hidden] { display: none; }
+  .definition-head { display: flex; justify-content: space-between; gap: 14px; padding: 18px 18px 14px; border-bottom: 1px solid var(--border); }
+  .definition-eyebrow { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); margin-bottom: 4px; }
+  .definition-title { font-size: 16px; font-weight: 700; line-height: 1.35; }
+  .definition-close { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); cursor: pointer; font-size: 18px; line-height: 24px; flex: 0 0 auto; }
+  .definition-close:hover { background: #f3f4f6; }
+  .definition-body { padding: 18px; overflow: auto; font-size: 12px; line-height: 1.55; }
+  .definition-body h3 { font-size: 15px; margin: 2px 0 10px; }
+  .definition-section { margin-top: 16px; }
+  .definition-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .definition-logic { background: #f9fafb; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .definition-logic code { font-family: var(--font-mono); font-size: 11px; white-space: normal; }
+  .definition-logic ul { margin: 0; padding-left: 18px; }
+  .definition-caveat { border-left: 3px solid #f59e0b; background: #fffbeb; color: #78350f; padding: 9px 11px; border-radius: 4px; }
+  .definition-search { width: 100%; margin-bottom: 14px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; }
+  .definition-list { display: flex; flex-direction: column; gap: 8px; }
+  .definition-item { border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; background: #fff; text-align: left; font-family: var(--font-mono); cursor: pointer; }
+  .definition-item:hover { background: #f9fafb; border-color: #d1d5db; }
+  .definition-item-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .definition-item-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; }
+  .definition-item-copy { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
+  .definition-footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .definition-secondary-btn { width: 100%; display: flex; justify-content: center; align-items: center; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; background: #fff; color: var(--text); font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; }
+  .definition-secondary-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .cash-note { font-size: 11px; color: var(--text-muted); margin: -8px 0 18px; line-height: 1.6; padding: 8px 12px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; }
+  .cash-note b { color: var(--text); font-weight: 600; }
+  .cash-note[hidden] { display: none; }
+  .cash-note .cash-note-intro { margin-bottom: 6px; }
+  .cash-note ul.cash-note-list { margin: 4px 0 0; padding-left: 20px; }
+  .cash-note ul.cash-note-list li { margin: 3px 0; }
+  .split-amber { font-size: 11px; color: #92400e; margin-top: 10px; padding: 6px 10px; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 4px; line-height: 1.6; }
+  .split-amber b { color: #78350f; font-weight: 600; }
+  .split-amber code { font-family: var(--font-mono); font-size: 10px; }
+  /* Initial-load overlay. Visible by default; init() hides it after render() runs. */
   .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.96); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-family: var(--font-mono); }
   .loading-overlay[hidden] { display: none; }
   .loading-overlay .loading-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
-  .loading-overlay .loading-bar { width: 320px; height: 3px; background: #f3f4f6; border-radius: 2px; overflow: hidden; }
-  .loading-overlay .loading-bar > div { height: 100%; width: 30%; background: var(--text); border-radius: 2px; animation: slideBar 1.4s ease-in-out infinite; }
+  .loading-overlay .loading-sub { font-size: 12px; color: var(--text-muted); max-width: 480px; text-align: center; line-height: 1.6; }
+  .loading-overlay .loading-steps { font-size: 11px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 6px; min-width: 320px; }
+  .loading-overlay .loading-step { display: flex; align-items: center; gap: 8px; }
+  .loading-overlay .loading-step .dot { width: 8px; height: 8px; border-radius: 50%; background: #d4d4d4; flex-shrink: 0; transition: background .2s; }
+  .loading-overlay .loading-step.active .dot { background: var(--text); animation: pulseDot 1s ease-in-out infinite; }
+  .loading-overlay .loading-step.done .dot { background: #22c55e; }
+  .loading-overlay .loading-step.done { color: var(--text); }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .loading-bar { width: 320px; height: 3px; background: #f3f4f6; border-radius: 2px; overflow: hidden; }
+  .loading-bar > div { height: 100%; width: 30%; background: var(--text); border-radius: 2px; animation: slideBar 1.4s ease-in-out infinite; }
   @keyframes slideBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(420%); } }
-  .footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
-  th, td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; }
-  th { background: #f9fafb; font-weight: 600; font-size: 12px; }
-  tr:hover { background: #f9fafb; }
-  .error { color: #ef4444; padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; margin: 12px 0; }
 </style>
   <link rel="icon" href="data:,">
 </head>
@@ -47,15 +138,16 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-title">Loading Checkout Funnel Demo</div>
   <div class="loading-bar"><div></div></div>
-  <div style="font-size: 12px; color: var(--text-muted); text-align: center; max-width: 480px;">
-    <p>Loading data from Google Drive. All figures are illustrative — no real customer or company metrics.</p>
+  <div class="loading-steps">
+    <div class="loading-step" id="loadStepData"><span class="dot"></span><span>Session data (~111 MB)</span></div>
+    <div class="loading-step" id="loadStepRender"><span class="dot"></span><span>Building charts</span></div>
   </div>
+  <div class="loading-sub">Sub-reason drill-down loads per-stage on click (~1-10 MB each) so the initial paint stays fast.</div>
 </div>
 
-<div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:8px;padding:14px 18px;margin:0 0 18px;font-size:14px;line-height:1.55"><b>⚠️ DEMO — for representational purposes only.</b> Every figure on this dashboard is <b>synthetic dummy data</b> generated for illustration. Numbers do not reflect actual conversion rates, volumes, or any real customer, merchant, or company data.</div>
-
+<div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:8px;padding:14px 18px;margin:0 0 18px;font-size:14px;line-height:1.55"><b>⚠️ DEMO — for representational purposes only.</b> Every figure on this dashboard is <b>synthetic dummy data</b> generated for illustration. Numbers do not reflect actual conversion rates, volumes, or any real customer, merchant, or company data — all sensitive data has been removed. Event markers, sub-reasons, and dates are illustrative examples. <b>Figures must not be quoted as actual company metrics.</b></div>
 <h1>Checkout Conversion Funnel — Demo</h1>
-<div class="subtitle">Illustrative checkout funnel — synthetic demo data</div>
+<div class="subtitle">Illustrative session-level conversion funnel — synthetic demo data | <span id="data-range"></span></div>
 
 <div class="controls">
   <div class="control-group">
@@ -67,7 +159,26 @@
     </select>
   </div>
   <div class="control-group">
+    <label>Date Start</label>
+    <input type="date" id="dateStart" min="2025-01-01">
+  </div>
+  <div class="control-group">
+    <label>Date End</label>
+    <input type="date" id="dateEnd" min="2025-01-01">
+  </div>
+  <div class="control-group">
     <label>Merchant Country</label>
+    <select id="filterMerchantCountry">
+      <option value="All">All</option>
+      <option value="US" selected>US</option>
+      <option value="CA">CA</option>
+      <option value="GB">GB</option>
+      <option value="AU">AU</option>
+      <option value="NZ">NZ</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Consumer Country</label>
     <select id="filterCountry">
       <option value="All">All</option>
       <option value="US" selected>US</option>
@@ -77,125 +188,2373 @@
       <option value="NZ">NZ</option>
     </select>
   </div>
+  <div class="control-group">
+    <label>Network</label>
+    <select id="filterNetwork">
+      <option value="All">All</option>
+      <option value="In-network">In-network</option>
+      <option value="Out of network">Out of network</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Checkout Mode</label>
+    <select id="filterCheckoutMode">
+      <option value="All">All</option>
+      <option value="standard">Standard</option>
+      <option value="express">Express</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Checkout Type</label>
+    <select id="filterCheckoutType">
+      <option value="All">All</option>
+      <option value="One-time">One-time</option>
+      <option value="On-file">On-file</option>
+    </select>
+  </div>
+  <div class="control-group" style="display:none">
+    <label>Customer Cohort</label>
+    <select id="filterCohort">
+      <option value="All">All</option>
+      <option value="Provider">Provider</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>New / Existing</label>
+    <select id="filterNewExisting">
+      <option value="All">All</option>
+      <option value="New">New</option>
+      <option value="Existing">Existing</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Shopper status</label>
+    <select id="filterNewConsumer4way" title="Where the shopper sits in their lifecycle at the start of this checkout — see explainer below.">
+      <option value="All">All</option>
+      <optgroup label="Returning">
+        <option value="Registered - subsequent order">Returning · with prior orders</option>
+        <option value="Registered - 1st order">Returning · no prior orders</option>
+        <option value="Returning - not signed in">Returning · not signed in</option>
+      </optgroup>
+      <optgroup label="New / unidentified">
+        <option value="Non-registered user">New signup</option>
+        <option value="Unidentified">Unidentified</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Window Type</label>
+    <select id="filterWindowType">
+      <option value="All">All</option>
+      <option value="redirect">redirect</option>
+      <option value="popup">popup</option>
+      <option value="iframe">iframe</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Source app</label>
+    <select id="filterSourceApp" title="Where the checkout is happening — the provider native app, a partner in-app browser, another in-app browser (Instagram / Facebook / TikTok / etc.), or a regular browser.">
+      <option value="All">All</option>
+      <option value="Provider app">Provider app</option>
+      <option value="Partner app">Partner app</option>
+      <option value="Other in-app">Other in-app</option>
+      <option value="Regular browser">Regular browser</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label>PM Eligibility</label>
+    <select id="filterPmEligibility" title="Did this session see the Pay Monthly / Pay in 4 choice page (CHOICE_PAGE_VIEWED)? Eligible sessions fork into a longer flow with a payment-type choice; not-eligible sessions go straight to the Pi4 Summary page.">
+      <option value="All">All</option>
+      <option value="Eligible">Eligible</option>
+      <option value="Not eligible">Not eligible</option>
+    </select>
+  </div>
+  <div class="control-group cash-only-filter" id="filterCashNVEGroup" hidden>
+    <label>Cash NVE</label>
+    <select id="filterCashNVE" title="Partner cohort-aware New vs Existing. Existing = ≥1 prior completed order. New = no partner account from an earlier session. New (prior-session record) = no prior order but has a shadow from an earlier session.">
+      <option value="All">All</option>
+      <option value="Existing">Existing</option>
+      <option value="New">New</option>
+      <option value="New (prior-session record)">New (prior-session record)</option>
+    </select>
+  </div>
+  <div class="control-group cash-only-filter" id="filterCashRedirectGroup" hidden>
+    <label>Cash Redirect Dest</label>
+    <select id="filterCashRedirect" title="How the Partner cohort session was routed to the partner app for login. Native deep-link is the preferred default; web login is the fallback when native isn't available; Manual buckets are required interstitial flows for Android and iframe checkouts.">
+      <option value="All">All</option>
+      <option value="Automatic Mobile App Redirect">Automatic Mobile App Redirect</option>
+      <option value="Automatic Web Login Redirect">Automatic Web Login Redirect</option>
+      <option value="Manual Mobile App">Manual Mobile App</option>
+      <option value="Manual Web Login">Manual Web Login</option>
+      <option value="Interstitial Pending">Interstitial Pending</option>
+      <option value="Unexpected case">Unexpected case</option>
+    </select>
+  </div>
+</div>
+
+<div class="split-pills">
+  <span class="split-label">Split by</span>
+  <button class="split-pill active" data-val="none">None</button>
+  <button class="split-pill" data-val="n">New / Existing</button>
+  <button class="split-pill" data-val="nc">Shopper status</button>
+  <button class="split-pill" data-val="cm">Checkout Mode</button>
+  <button class="split-pill" data-val="ct">Checkout Type</button>
+  <button class="split-pill" data-val="nw">Network</button>
+  <button class="split-pill" data-val="wt">Window Type</button>
+  <button class="split-pill" data-val="sa">Source app</button>
+  <button class="split-pill" data-val="pe">PM Eligibility</button>
+  <button class="split-pill cash-only-pill" data-val="nv" hidden>Cash NVE</button>
+  <button class="split-pill cash-only-pill" data-val="rd" hidden>Cash Redirect Dest</button>
+</div>
+
+<div class="cash-note" id="splitNote" hidden></div>
+
+<div class="cash-note" id="cashNVENote" hidden></div>
+<div class="cash-note" id="cashRedirectNote" hidden></div>
+<div class="cash-note" id="cashConvNote" hidden></div>
+<div class="card" id="trafficSplitCard" hidden>
+  <h2><span id="trafficSplitHeading">Traffic split</span> <span style="font-size:11px;color:var(--text-muted);font-weight:400">— % of sessions per period</span></h2>
+  <div class="chart-container" style="height:220px"><canvas id="trafficSplitChart"></canvas></div>
+</div>
+
+<div class="card" id="cvrTimelineCard" hidden>
+  <h2><span id="cvrTimelineHeading">Checkout Conversion Rate — Trend (illustrative %)</span> <span style="font-size:11px;color:var(--text-muted);font-weight:400">— Completed ÷ sessions per period</span></h2>
+  <div id="cvrTimelineSub" style="font-size:11px;color:var(--text-muted);margin-bottom:8px"></div>
+  <div class="chart-container" style="height:300px"><canvas id="cvrTimelineChart"></canvas></div>
 </div>
 
 <div class="card">
-  <h2>Data Summary</h2>
-  <div id="dataSummary" style="color: var(--text-muted); font-size: 13px;">Loading data...</div>
+  <h2 id="funnelChartHeadingCard"><span id="funnelChartHeading">Decline Reason Share — % of sessions by period (illustrative)</span> <span id="funnelSplitLabel" style="font-size:11px;color:var(--text-muted);font-weight:400"></span></h2>
+  <div id="funnelChartHost">
+    <div class="chart-container"><canvas id="funnelChart"></canvas></div>
+  </div>
 </div>
 
-<div class="card">
-  <h2>Sample Data Table</h2>
-  <div id="dataTable"></div>
-</div>
-
-<div class="card">
-  <h2>Demo Pages Available</h2>
-  <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.8;">
-    <li><a href="promo-codes-checkout-demo.html" style="color: #10b981; text-decoration: none; font-weight: 600;">Promo Codes Case Study</a> — Product case study about designing and building promo-code redemption inside Afterpay checkout</li>
-    <li><strong>Checkout Funnel</strong> — This page (loading data from Google Drive)</li>
-  </ul>
-</div>
+<div id="stageBreakdownHost"></div>
 
 <div class="footer">
-  Demo Pages Hosted on GitHub Pages · Data sourced from Google Drive · All data is synthetic
+  Checkout Conversion Funnel — DEMO · All data on this page is synthetic (see banner above)
+  <br>Last refreshed: <span id="lastRefreshed">—</span>
 </div>
 
+<div class="definition-backdrop" id="definitionBackdrop" hidden></div>
+<aside class="definition-drawer" id="definitionDrawer" hidden aria-hidden="true" aria-labelledby="definitionDrawerTitle">
+  <div class="definition-head">
+    <div>
+      <div class="definition-eyebrow" id="definitionDrawerEyebrow">Sub-reason glossary</div>
+      <div class="definition-title" id="definitionDrawerTitle">Login sub-reasons</div>
+    </div>
+    <button class="definition-close" id="definitionCloseBtn" type="button" aria-label="Close glossary">×</button>
+  </div>
+  <div class="definition-body" id="definitionBody"></div>
+</aside>
+
 <script>
-// Google Drive file IDs
-const GOOGLE_DRIVE_FILES = {
-  'data-recent-US': '19QklemRMzHMMpVfffBtOckD8tz6LPcK2',
-  'data-recent-AU': '1KGJ8-UP-01wo2qj7JWK30KQtg_f4mlu9',
-  'data-recent-CA': '1IbkVHJdUMChRcyFoVsAiIM1Jv1idy4a_',
-  'data-recent-GB': '1Qsd2eIS8wRk23dYvWpufj4ezux1zs5Ps',
-  'data-recent-NZ': '1ZB8sBFbI7p5lJauwPJlAEBBb1NWaNKNh',
-  'meta': '1AH6shP_1j02tTkbOJ8S7rnp3Vm6z22Jk',
-  'subreason-definitions': '1P5nVPDYKfeIzE0kQewECVmh79uRFfKO8',
-  'cash-data': '16kZVr2uStc1vyznb0ppLRbnBV0gxmIMn',
-  'subreasons-recent-00': '1pGc-gxgnpQy0J43Ahf_Qp4t9hwzD5YNe',
-  'subreasons-recent-01': '1Kv-d3g8a12QHqDQxxOfLRVU-EWXM-6Fc',
-  'subreasons-recent-02': '1n1Pp5VNjwkrJikz-ub2aSkDnHc564Lsn',
-  'subreasons-recent-03': '1c_Wv4Vrz7w0Bc__r5uANlLfu6ahGPs26',
-  'subreasons-recent-04': '1C0eGkispHySvzaxCcDZqMcrssANKUvjG',
-  'subreasons-recent-05': '16KEXrCEIuhCqb6lYMwNvkLM5DMp9hUpf',
-  'subreasons-recent-06': '1v0uD8TnwH_Evx9By0RRYtlgcQUNLuBzP',
-  'subreasons-recent-07': '1rOoKhYJisd7H6SMdDSTSqtRosUwTeU7w',
-  'subreasons-recent-08': '1UpTdChc2ziJ_r5CdMmi9w1WhtVLrcXG_',
-  'subreasons-recent-09': '1DSqQOxUE-V78PTpqhYC1sgelBAsflI8e',
-  'subreasons-recent-10': '1QF5ZmPSAa-w6Bjyb8JaOiDjLjxw-fhM9',
-  'subreasons-recent-11': '1X0uyvjrdPw07RGdbs2bJRH3NsFqcqJVX',
-  'subreasons-recent-99': '1-LJ4UcsN_ZiNaCxX78qdoR1TJzHDA4pf',
-};
-
-function getGoogleDriveUrl(fileId) {
-  return `https://drive.google.com/uc?export=download&id=${fileId}`;
-}
-
-async function loadJsonFromGoogleDrive(fileName) {
-  const fileId = GOOGLE_DRIVE_FILES[fileName];
-  if (!fileId) throw new Error(`File ID not found for ${fileName}`);
-  const url = getGoogleDriveUrl(fileId);
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
+// GitHub Pages DEMO build: all data is synthetic and stored in split files
+// under data/. This compatibility shim keeps the dashboard's existing fetch
+// contract while avoiding a large embedded HTML file.
+const __DEMO_COUNTRY_FILES = ["data-recent-US.json","data-recent-AU.json","data-recent-GB.json","data-recent-NZ.json","data-recent-CA.json"];
+const __DEMO_STAGE_FILES = ["subreasons-recent-00.json","subreasons-recent-01.json","subreasons-recent-02.json","subreasons-recent-03.json","subreasons-recent-04.json","subreasons-recent-05.json","subreasons-recent-06.json","subreasons-recent-07.json","subreasons-recent-08.json","subreasons-recent-09.json","subreasons-recent-10.json","subreasons-recent-11.json","subreasons-recent-99.json"];
+const __DEMO_DIRECT_FILES = new Set([
+  'meta.json', 'subreason-definitions.json', 'cash-data.json',
+  ...__DEMO_STAGE_FILES
+]);
+const __origFetch = window.fetch.bind(window);
+const __jsonResult = value => ({ ok: true, status: 200, json: async () => value });
+async function __loadDemoJson(name, query, opts) {
+  const response = await __origFetch(`data/${name}${query}`, opts);
+  if (!response.ok) throw new Error(`Failed to load ${name} (${response.status})`);
   return response.json();
 }
+window.fetch = async (url, opts) => {
+  const raw = String(url);
+  const q = raw.indexOf('?');
+  const path = q === -1 ? raw : raw.slice(0, q);
+  const query = q === -1 ? '' : raw.slice(q);
+  const name = path.split('/').pop();
+  if (name === 'data-recent.json' || name === 'data.json') {
+    const chunks = await Promise.all(
+      __DEMO_COUNTRY_FILES.map(file => __loadDemoJson(file, query, opts))
+    );
+    return __jsonResult(chunks.flat());
+  }
+  if (name === 'subreasons.json') {
+    const chunks = await Promise.all(
+      __DEMO_STAGE_FILES.map(file => __loadDemoJson(file, query, opts))
+    );
+    return __jsonResult(chunks.flat());
+  }
+  if (__DEMO_DIRECT_FILES.has(name)) {
+    return __origFetch(`data/${name}${query}`, opts);
+  }
+  return __origFetch(url, opts);
+};
+</script>
+<script>
+// STAGES list is ordered to match the customer journey. The internal labels
+// here also appear in the JSON data files (data.json, subreasons-recent-*.json),
+// so the numeric prefixes are stable — DO NOT renumber the internal labels.
+// User-visible numbering is remapped via STAGE_DISPLAY below.
+const STAGES = [
+  '00. Pre-Login','01. Signup','02. Login','03. Account Status','04. Policy',
+  '06. Credit Risk','11. Pay Monthly','07. Payment Method','08. Summary Page',
+  '05. Fraud Risk','09. Payment Decline','10. Other Declines','99. Completed'
+];
 
-async function init() {
-  try {
-    // Load meta data
-    const meta = await loadJsonFromGoogleDrive('meta');
-    const summary = document.getElementById('dataSummary');
-    summary.innerHTML = `
-      <strong>Refreshed:</strong> ${meta.refreshedAt}<br>
-      <strong>Total rows:</strong> ${meta.rows.toLocaleString()}<br>
-      <strong>Data through:</strong> ${meta.maxDate}
-    `;
+// Display labels — internal stage codes mapped to the renumbered names shown
+// to the user. The display order matches STAGES (the journey order). This is
+// a frontend-only remap; the underlying data files still use the original
+// internal labels, so loadStageSubReasons(stage) still resolves the right file.
+const STAGE_DISPLAY = {
+  '00. Pre-Login':      '00. Pre-Login',
+  '01. Signup':         '01. Signup',
+  '02. Login':          '02. Login',
+  '03. Account Status': '03. Account Status',
+  '04. Policy':         '04. Policy',
+  '06. Credit Risk':    '05. Credit Risk',
+  '11. Pay Monthly':    '06. Pay Monthly',
+  '07. Payment Method': '07. Payment Method',
+  '08. Summary Page':   '08. Summary Page',
+  '05. Fraud Risk':     '09. Fraud Risk',
+  '09. Payment Decline':'10. Payment Decline',
+  '10. Other Declines': '11. Other Declines',
+  '99. Completed':      '99. Completed',
+};
+function stageDisplay(stage) {
+  return STAGE_DISPLAY[stage] || stage;
+}
 
-    // Load sample data (US)
-    const dataUS = await loadJsonFromGoogleDrive('data-recent-US');
-    const tableContainer = document.getElementById('dataTable');
-    
-    if (dataUS && dataUS.length > 0) {
-      const sampleData = dataUS.slice(0, 10);
-      let html = '<table><thead><tr><th>Date</th><th>Stage</th><th>Country</th><th>Tokens</th></tr></thead><tbody>';
-      sampleData.forEach(row => {
-        html += `<tr><td>${row.d || '-'}</td><td>${row.r || '-'}</td><td>${row.c || '-'}</td><td>${(row.t || 0).toLocaleString()}</td></tr>`;
-      });
-      html += '</tbody></table>';
-      tableContainer.innerHTML = html;
-    } else {
-      tableContainer.innerHTML = '<p style="color: var(--text-muted);">No data available</p>';
-    }
+const STAGE_COLORS = {
+  '00. Pre-Login':     '#6366f1',
+  '01. Signup':        '#8b5cf6',
+  '02. Login':         '#f59e0b',
+  '03. Account Status':'#06b6d4',
+  '04. Policy':        '#a78bfa',
+  '05. Fraud Risk':    '#ef4444',
+  '06. Credit Risk':   '#f97316',
+  '07. Payment Method':'#ec4899',
+  '08. Summary Page':  '#fb923c',
+  '09. Payment Decline':'#94a3b8',
+  '10. Other Declines':'#22c55e',
+  '11. Pay Monthly':   '#1e3a5f',
+  '99. Completed':     '#a7f3d0'
+};
 
-    // Load definitions
-    const defs = await loadJsonFromGoogleDrive('subreason-definitions');
-    console.log('Definitions loaded:', defs ? Object.keys(defs.definitions || {}).length : 0, 'entries');
+// Partner cohort taxonomy (Dashboard 2). Different from main 00-11+99.
+// '01. Reached partner login, dropped off' is presently empty (collapsed into 00)
+// until CASH_DATA_BOT.PUBLIC.CUSTOMER_REQUEST_INTERSTITIAL_RAW_GREEN access is granted.
+const CASH_STAGES = [
+  '00. Pre-login dropoff, no confirmation we reached partner login',
+  '01. Login dropoff, reached partner login',
+  '02. Post-Login',
+  '03. Account Status',
+  '04. Customer lost during account fix-up',
+  '05. Partner Account Creation Failure',
+  '06. Policy',
+  '07.Credit Risk',
+  '08. Pay Monthly',
+  '09.Summary Page',
+  '10.Fraud Risk',
+  '11.Payment Decline',
+  '12. Partner App Pay Failure',
+  '13. Other Declines',
+  '14. Linking Errors',
+  '15. Completed'
+];
 
-    // Hide loading overlay
-    setTimeout(() => {
-      const overlay = document.getElementById('loadingOverlay');
-      if (overlay) {
-        overlay.style.transition = 'opacity 0.25s';
-        overlay.style.opacity = '0';
-        setTimeout(() => { overlay.hidden = true; }, 250);
-      }
-    }, 500);
+// Aligned with main funnel STAGE_COLORS where stage meanings overlap.
+// Same-meaning stages: 02 Login, 03 Account Status, 06 Policy, 07 Credit Risk,
+// 08 Summary Page, 09 Fraud Risk, 10 Payment Decline, 14 Completed → main 99.
+// Partner-specific stages (stages unique to the partner-cohort taxonomy)
+// get distinct hues. 12. Other Declines reuses main's #22c55e for visual continuity.
+const CASH_STAGE_COLORS = {
+  '00. Pre-login dropoff, no confirmation we reached partner login': '#6366f1', // main 00. Pre-Login
+  '01. Login dropoff, reached partner login':                        '#8b5cf6', // main 01. Signup (early-funnel violet)
+  '02. Post-Login':                                               '#f59e0b', // main 02. Login
+  '03. Account Status':                                           '#06b6d4', // main 03. Account Status
+  '04. Customer lost during account fix-up':                    '#d8b4fe', // Partner-specific (lavender)
+  '05. Partner Account Creation Failure':                          '#be123c', // Partner-specific (rose)
+  '06. Policy':                                                   '#a78bfa', // main 04. Policy
+  '07.Credit Risk':                                               '#f97316', // main 06. Credit Risk
+  '08. Pay Monthly':                                              '#1e3a5f', // main Pay Monthly (dark blue)
+  '09.Summary Page':                                              '#fb923c', // main 08. Summary Page
+  '10.Fraud Risk':                                                '#ef4444', // main 05. Fraud Risk
+  '11.Payment Decline':                                           '#94a3b8', // main 09. Payment Decline
+  '12. Partner App Pay Failure':                                     '#ec4899', // main 07. Payment Method (payment family pink)
+  '13. Other Declines':                                           '#64748b', // neutral slate (was main's Other Declines green — moved to Completed)
+  '14. Linking Errors':                                       '#7f1d1d', // Partner-specific (deep red)
+  '15. Completed':                                                '#22c55e'  // Cash green — success color
+};
 
-  } catch (error) {
-    console.error('Error loading data:', error);
-    const summary = document.getElementById('dataSummary');
-    summary.innerHTML = `<div class="error"><strong>Error loading data:</strong> ${error.message}</div>`;
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) overlay.hidden = true;
+// Vertical event markers for the CVR timeline. `country` scopes a marker to one
+// country (US / CA / GB / AU / NZ — note UK = 'GB' in this data); omit `country`
+// for a global event, which then shows on every single-country view. `color` is
+// optional: blue = launch/ramp, red = incident; defaults to grey.
+const MILESTONES = [
+  // Illustrative example events (synthetic dates) — markers on the CVR timeline.
+  { date: '2026-04-06', label: 'Example: Feature ramp start', country: 'US', color: '#2563eb' },
+  { date: '2026-05-18', label: 'Example: Feature ramp → 100%', country: 'US', color: '#2563eb' },
+  { date: '2026-06-22', label: 'Example: Production incident', color: '#dc2626' }
+];
+
+let rawData = [];
+// Latest data day present in the currently-rendered (filtered) view. Drives the
+// "(partial)" marker on trailing week/month buckets that aren't calendar-complete.
+let viewMaxDay = '';
+let subReasonData = null;
+let allExpanded = false;
+let fullDataLoaded = false;
+let loadingFull = false;
+let chart = null;
+let funnelCharts = [];
+let activeSplitBy = 'none';
+let cashData = null;
+let cashDataLoading = false;
+let trafficSplitChart = null;
+let cvrChart = null;
+let subReasonDefinitions = { definitions: {}, updatedAt: null };
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[ch]));
+}
+
+function definitionKey(stage, subReason) {
+  return `${stage}||${subReason || '(empty)'}`;
+}
+
+function getSubReasonDefinition(stage, subReason) {
+  return (subReasonDefinitions.definitions || {})[definitionKey(stage, subReason)];
+}
+
+function subReasonLabel(stage, subReason) {
+  const label = escapeHtml(subReason || '(empty)');
+  if (!getSubReasonDefinition(stage, subReason)) return label;
+  return `<span class="sub-label"><span>${label}</span><button class="subreason-info-btn" type="button" data-stage="${escapeHtml(stage)}" data-subreason="${escapeHtml(subReason || '(empty)')}" aria-label="Explain ${label}" title="Explain this sub-reason">?</button></span>`;
+}
+
+function definitionEntries() {
+  return Object.values(subReasonDefinitions.definitions || {})
+    .sort((a, b) => {
+      const taxA = String(a.taxonomy || '');
+      const taxB = String(b.taxonomy || '');
+      if (taxA !== taxB) return taxA.localeCompare(taxB);
+      const stages = taxA === 'Cash cohort funnel' ? CASH_STAGES : STAGES;
+      const stageA = stages.indexOf(a.stage);
+      const stageB = stages.indexOf(b.stage);
+      if (stageA !== stageB) return (stageA === -1 ? 999 : stageA) - (stageB === -1 ? 999 : stageB);
+      return String(a.sub_reason).localeCompare(String(b.sub_reason));
+    });
+}
+
+function openDefinitionDrawer() {
+  const drawer = document.getElementById('definitionDrawer');
+  const backdrop = document.getElementById('definitionBackdrop');
+  if (!drawer || !backdrop) return;
+  drawer.hidden = false;
+  backdrop.hidden = false;
+  drawer.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => drawer.classList.add('open'));
+}
+
+function closeDefinitionDrawer() {
+  const drawer = document.getElementById('definitionDrawer');
+  const backdrop = document.getElementById('definitionBackdrop');
+  if (!drawer || !backdrop) return;
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    drawer.hidden = true;
+    backdrop.hidden = true;
+  }, 180);
+}
+
+function renderDefinitionDetail(def) {
+  if (!def) return;
+  const title = document.getElementById('definitionDrawerTitle');
+  const eyebrow = document.getElementById('definitionDrawerEyebrow');
+  const body = document.getElementById('definitionBody');
+  if (!title || !eyebrow || !body) return;
+  const stageName = def.stage_display || stageDisplay(def.stage || '');
+  eyebrow.textContent = def.taxonomy ? `${def.taxonomy} · ${stageName}` : stageName;
+  title.textContent = def.sub_reason || '(empty)';
+  const logic = (def.source_logic || [])
+    .map(item => `<li><code>${escapeHtml(item)}</code></li>`)
+    .join('');
+  body.innerHTML = `
+    <h3>${escapeHtml(def.sub_reason || '(empty)')}</h3>
+    <p>${escapeHtml(def.meaning || '')}</p>
+    ${logic ? `<div class="definition-section"><div class="definition-label">Source logic</div><div class="definition-logic"><ul>${logic}</ul></div></div>` : ''}
+    ${def.caveat ? `<div class="definition-section definition-caveat">${escapeHtml(def.caveat)}</div>` : ''}
+    ${def.owner_note ? `<div class="definition-section"><div class="definition-label">Note</div><p>${escapeHtml(def.owner_note)}</p></div>` : ''}
+    <div class="definition-footer">
+      <button class="definition-secondary-btn" type="button" data-definition-action="glossary">View all sub-reasons</button>
+    </div>
+  `;
+  openDefinitionDrawer();
+}
+
+function openDefinitionDetail(stage, subReason) {
+  const def = getSubReasonDefinition(stage, subReason === '(empty)' ? '' : subReason);
+  if (def) renderDefinitionDetail(def);
+}
+
+function renderGlossaryList(filter = '') {
+  const body = document.getElementById('definitionBody');
+  if (!body) return;
+  const q = filter.trim().toLowerCase();
+  const entries = definitionEntries().filter(def => {
+    const haystack = `${def.taxonomy || ''} ${def.stage} ${def.stage_display || ''} ${def.sub_reason} ${def.meaning} ${(def.source_logic || []).join(' ')} ${def.caveat || ''}`.toLowerCase();
+    return !q || haystack.includes(q);
+  });
+  const updated = subReasonDefinitions.updatedAt
+    ? `<div class="definition-item-meta">Definitions last reviewed ${escapeHtml(subReasonDefinitions.updatedAt)}</div>`
+    : '';
+  const list = entries.map(def => `
+    <button class="definition-item" type="button" data-stage="${escapeHtml(def.stage)}" data-subreason="${escapeHtml(def.sub_reason)}">
+      <div class="definition-item-title">${escapeHtml(def.sub_reason || '(empty)')}</div>
+      <div class="definition-item-meta">${escapeHtml(def.taxonomy || 'Funnel')} · ${escapeHtml(def.stage_display || stageDisplay(def.stage))}</div>
+      <div class="definition-item-copy">${escapeHtml(def.meaning)}</div>
+    </button>
+  `).join('');
+  body.innerHTML = `
+    ${updated}
+    <input class="definition-search" id="definitionSearch" type="search" placeholder="Search sub-reasons" value="${escapeHtml(filter)}">
+    <div class="definition-list">${list || '<div class="definition-item-copy">No matching definitions.</div>'}</div>
+  `;
+  const search = document.getElementById('definitionSearch');
+  if (search) {
+    search.focus();
+    search.addEventListener('input', () => renderGlossaryList(search.value));
   }
 }
 
-// Load on page ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+function openGlossary() {
+  const title = document.getElementById('definitionDrawerTitle');
+  const eyebrow = document.getElementById('definitionDrawerEyebrow');
+  if (title) title.textContent = 'All sub-reasons';
+  if (eyebrow) eyebrow.textContent = 'Sub-reason glossary';
+  renderGlossaryList('');
+  openDefinitionDrawer();
 }
+
+// Sequential slate palette (dark → light) for the traffic-split chart —
+// keeps the page's color budget reserved for the colorful trellis charts
+// below. Single-hue family, 6 well-spaced steps so it scales from 2-bucket
+// splits (Cash NVE has 3) up to 6-bucket splits (Cash Redirect Dest has 6).
+// Buckets are distinguished by intensity + the inline % labels on each segment.
+const TRAFFIC_SPLIT_PALETTE = ['#0f172a', '#334155', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0'];
+function trafficSplitColor(_key, idx) {
+  return TRAFFIC_SPLIT_PALETTE[idx % TRAFFIC_SPLIT_PALETTE.length];
+}
+
+const SPLIT_LABELS = {
+  n: 'New / Existing',
+  nc: 'Shopper status',
+  co: 'Customer Cohort',
+  cm: 'Checkout Mode',
+  ct: 'Checkout Type',
+  nw: 'Network',
+  mc: 'Merchant Country',
+  c: 'Consumer Country',
+  wt: 'Window Type',
+  sa: 'Source app',
+  pe: 'PM Eligibility',
+  nv: 'Cash NVE',
+  rd: 'Cash Redirect Dest'
+};
+
+// One concise note per split. Format: short intro line ending in `:` followed by
+// one bullet per value. Rendered into #splitNote when the split-by pill or its
+// corresponding filter is active. Partner-specific splits (nv, rd) keep their own
+// inline elements because they share the Cash-cohort view's other notes.
+const SPLIT_NOTES = {
+  n: {
+    intro: '<b>New / Existing</b> — coarse 2-way split based on whether the consumer had a prior account with at least one completed order. <em>Shopper status</em> gives the finer 4-way breakdown:',
+    items: [
+      ['Existing', 'has an account with ≥1 completed prior order'],
+      ['New', 'everything else (no account, new signup, or account but no orders yet)'],
+    ]
+  },
+  nc: {
+    intro: '<b>Shopper status</b> — who the shopper is, set at the <i>start</i> of the checkout. <b>Key point:</b> a customer is "identified" when we <b>recognise</b> them (a ConsumerID resolved from a prior sign-in <i>or a trusted-device cookie</i>) — <b>not</b> by whether they finish logging in this time. So identified returning customers can still appear as login drop-offs when they get re-challenged (OTP / 2FA / biometric). The last two below could <i>not</i> be identified (no ConsumerID), so their type is inferred from the pages they reached:',
+    items: [
+      ['Returning · with prior orders', 'Identified (recognised via prior sign-in or a trusted-device cookie) and has ≥1 completed prior order. Can still show login drop-off if re-challenged.'],
+      ['Returning · no prior orders', 'Identified; has an account but no completed orders yet. Kept separate from the above on purpose — this cohort converts very differently from repeat buyers.'],
+      ['Returning · not signed in', 'NOT identified (no ConsumerID), but reached the login / password / create-password step — so an account exists and they are almost certainly returning; we just could not confirm who, so prior-order status is unknown.'],
+      ['New signup', 'Creating a new account during this checkout.'],
+      ['Unidentified', 'Dropped before revealing whether they were logging in or signing up (e.g. left at the email step) — type unknown.'],
+    ]
+  },
+  co: {
+    intro: '<b>Customer Cohort</b> — which account the customer uses to log in at checkout:',
+    items: [
+      ['Provider', 'logged in with provider credentials'],
+      ['Partner', 'logged in with partner-app credentials'],
+    ]
+  },
+  cm: {
+    intro: '<b>Checkout Mode</b> — where in the merchant journey the checkout is initiated:',
+    items: [
+      ['Standard', 'initiated from the merchant\'s payment page during the merchant checkout flow'],
+      ['Express', 'initiated earlier in the shopping journey — from the PDP or directly from the cart, before the merchant\'s checkout flow'],
+    ]
+  },
+  ct: {
+    intro: '<b>Checkout Type</b> — whether the customer goes through the checkout flow for this order:',
+    items: [
+      ['One-time', 'customer goes through the checkout flow to confirm and place the order'],
+      ['On-file', 'covers two patterns — a <b>Customer-Initiated Transaction (CIT)</b> placed directly from the merchant site without entering the hosted checkout, and a <b>Merchant-Initiated Transaction (MIT)</b> placed by the merchant on the customer\'s behalf'],
+    ]
+  },
+  nw: {
+    intro: '<b>Network</b> — whether the merchant has a direct integration:',
+    items: [
+      ['In-network', 'merchant has integrated the provider on their site'],
+      ['Out of network', 'merchant has <em>not</em> integrated the provider on their site. Purchases at these merchants happen only via the provider app'],
+    ]
+  },
+  wt: {
+    intro: '<b>Window Type</b> — how the checkout is rendered on the merchant page:',
+    items: [
+      ['redirect', 'full-page redirect to the hosted checkout'],
+      ['popup', 'checkout opens in a popup window'],
+      ['iframe', 'checkout embedded inline inside the merchant page'],
+    ]
+  },
+  sa: {
+    intro: '<b>Source app</b> — where the consumer is checking out from:',
+    items: [
+      ['Provider app', 'inside the provider native iOS / Android app'],
+      ['Partner app', 'a partner app in-app browser'],
+      ['Other in-app', 'another in-app webview — could be a merchant app, Instagram, Facebook, TikTok, etc.'],
+      ['Regular browser', 'Safari / Chrome / Firefox / etc.'],
+    ]
+  },
+  pe: {
+    intro: '<b>PM Eligibility</b> — did the session see the Pay Monthly / Pi4 Payment Selection page?',
+    items: [
+      ['Eligible', 'saw the PM / Pi4 Payment Selection page (<code>CHOICE_PAGE_VIEWED = TRUE</code>)'],
+      ['Not eligible', 'went straight to Pi4 Summary'],
+    ],
+    amber: 'Apples-to-apples scope: both arms are restricted to <b>merchants enabled for Pay Monthly</b>, <b>interactive (One-time) checkouts</b> only (On-file never sees the choice page), and start <b>after the provider\'s login, account-status, policy, and credit-risk gates</b> — the point where PM eligibility is actually decided. Fraud Risk stays in view (it happens later, downstream of the PM decision). Window restricted to <b>Mar 2026+</b> when <code>CHOICE_PAGE_VIEWED</code> tracking began.'
+  },
+};
+
+function renderSplitNote(isCashView) {
+  const el = document.getElementById('splitNote');
+  if (!el) return;
+  // Cash-cohort view uses its own inline notes (cashConvNote / cashNVENote /
+  // cashRedirectNote); never show the standard split note there.
+  // Otherwise: only show the note when a split pill is active. Filter dropdowns
+  // alone do not trigger the explainer — that was causing the note to appear
+  // on the default view when no split was selected.
+  const activeKey = (!isCashView && activeSplitBy && activeSplitBy !== 'none' && SPLIT_NOTES[activeSplitBy])
+    ? activeSplitBy : null;
+  if (!activeKey) { el.hidden = true; return; }
+  const note = SPLIT_NOTES[activeKey];
+  const bullets = note.items.map(([k, v]) => `<li><b>${k}</b> — ${v}</li>`).join('');
+  const amber = note.amber
+    ? `<div class="split-amber">${note.amber}</div>`
+    : '';
+  el.innerHTML = `<div class="cash-note-intro">${note.intro}</div><ul class="cash-note-list">${bullets}</ul>${amber}`;
+  el.hidden = false;
+}
+
+// Derive 4-way Source app from the raw apa + ica + iab booleans on each row.
+// partner app (ica=Yes, from an in-app flag) is split
+// out of the broader "Other in-app" bucket. Provider app takes priority if both flags
+// are set (shouldn't happen in clean data, but defensive).
+function rowSourceApp(row) {
+  if (row.apa === 'Yes') return 'Provider app';
+  if (row.ica === 'Yes') return 'Partner app';
+  if (row.iab === 'Yes') return 'Other in-app';
+  return 'Regular browser';
+}
+
+// Wrapper so filter/split-by logic can treat `sa` as a virtual column.
+function rowValue(row, key) {
+  if (key === 'sa') return rowSourceApp(row);
+  return row[key];
+}
+
+// Friendly display labels for the 4 raw shopper-status values stored in `nc`.
+// Raw values stay in the JSON so filtering/aggregation keys are stable.
+const NC_LABELS = {
+  'Registered - subsequent order': 'Returning · with prior orders',
+  'Registered - 1st order': 'Returning · no prior orders',
+  'Returning - not signed in': 'Returning · not signed in',
+  'Non-registered user': 'New signup',
+  'Unidentified': 'Unidentified',
+  'Unknown User': 'Unidentified'
+};
+// Canonical display order for shopper status — overrides volume sort in split/breakdown views.
+const NC_ORDER = ['Registered - subsequent order', 'Registered - 1st order', 'Returning - not signed in', 'Non-registered user', 'Unidentified'];
+// Comparator for split-value entries [key, vol]: fixed order for shopper status, else volume desc.
+function splitEntrySort(splitBy) {
+  if (splitBy === 'nc') {
+    const rank = (k) => { const i = NC_ORDER.indexOf(k); return i < 0 ? 99 : i; };
+    return (a, b) => rank(a[0]) - rank(b[0]);
+  }
+  return (a, b) => b[1] - a[1];
+}
+function displayKey(splitBy, value) {
+  if (splitBy === 'nc') return NC_LABELS[value] || value;
+  return value;
+}
+
+const MAX_TRELLIS_PANELS = 8;
+
+// PM Eligibility comparison is only meaningful AFTER the provider's eligibility +
+// credit checks. Sessions that drop at Account Status / Policy / Credit Risk
+// never reach the Lightweight page, so they're all "Not eligible" by
+// construction. Excluding them keeps both panels (Eligible vs Not eligible)
+// starting from the same denominator: sessions that passed every gate up to
+// the PM eligibility decision point.
+// Note: Fraud Risk (stage 05) is intentionally NOT pre-PM — it happens after
+// the Summary Page, downstream of the PM decision, so it stays in view.
+// See SPLIT_NOTES[pe] for the user-facing copy.
+const PRE_PM_STAGES = new Set([
+  '00. Pre-Login','01. Signup','02. Login',
+  '03. Account Status','04. Policy','06. Credit Risk'
+]);
+// CHOICE_PAGE_VIEWED wasn't populated before this date — pre-March 2026 rows
+// all read as 'Not eligible' but the column was simply NULL. Hide those rows
+// entirely when PM Eligibility is active to avoid misleading the user.
+const PM_DATA_FLOOR = '2026-03-01';
+function pmEligibilityActive() {
+  return activeSplitBy === 'pe'
+    || document.getElementById('filterPmEligibility').value !== 'All';
+}
+
+// Data-label plugin: draw % on stacked-bar segments that are ≥ MIN_LABEL_PCT
+const MIN_LABEL_PCT = 3;
+const dataLabelPlugin = {
+  id: 'segmentLabels',
+  afterDatasetsDraw(ch) {
+    const { ctx } = ch;
+    ctx.save();
+    ctx.font = '600 10px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ch.data.datasets.forEach((ds, dsIdx) => {
+      const meta = ch.getDatasetMeta(dsIdx);
+      meta.data.forEach((bar, i) => {
+        const val = ds.data[i];
+        if (val == null || val < MIN_LABEL_PCT) return;
+        const { x, y, base } = bar.getProps(['x', 'y', 'base'], true);
+        const h = Math.abs(base - y);
+        if (h < 14) return;
+        const cy = (y + base) / 2;
+        // Contrast: pick black or white based on segment colour luminance
+        const bg = ds.backgroundColor;
+        ctx.fillStyle = isLightColor(bg) ? '#1f2937' : '#fff';
+        ctx.fillText(val.toFixed(1) + '%', x, cy);
+      });
+    });
+    ctx.restore();
+  }
+};
+
+function isLightColor(hex) {
+  if (!hex || hex[0] !== '#') return false;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) > 170;
+}
+
+function buildMilestoneAnnotations(sortedPeriods, unit) {
+  const mcFilter = document.getElementById('filterMerchantCountry').value;
+  const cFilter = document.getElementById('filterCountry').value;
+  const activeCountry = mcFilter !== 'All' ? mcFilter : cFilter !== 'All' ? cFilter : 'All';
+
+  // Pass 1 — collect the markers that land inside the charted window, in x order.
+  const eligible = [];
+  MILESTONES.forEach(m => {
+    if (activeCountry !== 'All' && m.country && m.country !== activeCountry) return;
+    const idx = sortedPeriods.indexOf(getPeriodKey(m.date, unit));
+    if (idx !== -1) eligible.push({ m, idx });
+  });
+  eligible.sort((a, b) => a.idx - b.idx);
+
+  // Pass 2 — stagger labels into vertical lanes so near-x markers don't overlap.
+  // Labels are ~120px wide, so markers close together in x collide (worst in the
+  // week/month views where several dates fall in one bucket). Cluster markers
+  // within `gap` category-slots (scaled to the current zoom) and lift each next
+  // one into a higher lane; reset to the baseline lane once a real gap appears.
+  const gap = Math.max(2, Math.round(sortedPeriods.length * 0.08));
+  const LANE_STEP = 36, MAX_LANES = 3;   // 36px clears the two-line (label + date) label height
+  const fmtDate = iso => new Date(iso + 'T00:00:00')
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const annotations = {};
+  let lane = 0;
+  eligible.forEach((e, i) => {
+    lane = (i > 0 && e.idx - eligible[i - 1].idx <= gap) ? (lane + 1) % MAX_LANES : 0;
+    const color = e.m.color || '#6b7280';
+    annotations['line' + i] = {
+      type: 'line', xMin: e.idx, xMax: e.idx, borderColor: e.m.color || '#9ca3af',
+      borderWidth: 1, borderDash: [4, 3],
+      label: { display: true, content: [e.m.label, fmtDate(e.m.date)], position: 'start', yAdjust: -lane * LANE_STEP,
+        backgroundColor: color, color: ['#fff', 'rgba(255,255,255,0.85)'],
+        font: [{ size: 10, weight: '600' }, { size: 9, weight: '400' }],
+        padding: { top: 3, bottom: 3, left: 6, right: 6 }, borderRadius: 4 }
+    };
+  });
+  return annotations;
+}
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+function pct(n, d) { return d > 0 ? (100 * n / d).toFixed(2) + '%' : '—'; }
+
+// Trend arrow comparing to prior period
+function trendArrow(current, previous, isCompleted) {
+  if (previous === null || previous === undefined) return '';
+  const diff = current - previous;
+  const threshold = 0.1;
+  if (Math.abs(diff) < threshold) return ' <span style="color:#9ca3af">→</span>';
+  if (isCompleted) {
+    // CVR: up = good (green), down = bad (red)
+    return diff > 0
+      ? ' <span style="color:#10b981">↑</span>'
+      : ' <span style="color:#ef4444">↓</span>';
+  }
+  // Dropoff: up = bad (red), down = good (green)
+  return diff > 0
+    ? ' <span style="color:#ef4444">↑</span>'
+    : ' <span style="color:#10b981">↓</span>';
+}
+
+// Heatmap: red for dropoff severity, green for CVR
+function heatColor(pctVal, isCompleted) {
+  if (isCompleted) {
+    // Green scale: higher CVR = more green
+    const intensity = Math.min(pctVal / 100, 1);
+    const r = Math.round(255 - intensity * 90);
+    const g = Math.round(255 - intensity * 10);
+    const b = Math.round(255 - intensity * 80);
+    return `rgb(${r},${g},${b})`;
+  }
+  // Red scale: higher dropoff = more red
+  // 0% = white, 10%+ = saturated red
+  const intensity = Math.min(pctVal / 10, 1);
+  const r = 255;
+  const g = Math.round(255 - intensity * 100);
+  const b = Math.round(255 - intensity * 90);
+  return `rgb(${r},${g},${b})`;
+}
+
+function getWeekStart(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDay();
+  const diff = (day === 0 ? 6 : day - 1); // Monday = 0
+  d.setDate(d.getDate() - diff);
+  return d.toISOString().slice(0, 10);
+}
+
+function getMonthStart(dateStr) {
+  return dateStr.slice(0, 7) + '-01';
+}
+
+function getPeriodKey(dateStr, unit) {
+  if (unit === 'day') return dateStr;
+  if (unit === 'week') return getWeekStart(dateStr);
+  return getMonthStart(dateStr);
+}
+
+function nextDay(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Is a week/month bucket calendar-complete relative to the latest day of data shown?
+// Only the bucket that CONTAINS maxDay can be incomplete; all earlier buckets are
+// fully in the past. Completeness reuses getPeriodKey (the same fn that buckets the
+// data), so week/month boundary math is always consistent — no independent end-date
+// calc that could TZ-drift out of step with getWeekStart. Returns {complete, have, total}.
+function periodCoverage(key, unit, maxDay) {
+  if (unit === 'day' || !maxDay || key !== getPeriodKey(maxDay, unit)) {
+    return { complete: true, have: 1, total: 1 };
+  }
+  const complete = getPeriodKey(nextDay(maxDay), unit) !== key; // maxDay is the period's last day
+  let have, total;
+  if (unit === 'month') {
+    const [y, m] = key.split('-').map(Number); // new Date(y, m, 0) → last day of month m
+    total = new Date(y, m, 0).getDate();
+    have = Number(maxDay.split('-')[2]);
+  } else { // week
+    total = 7;
+    have = Math.round((new Date(maxDay + 'T00:00:00') - new Date(key + 'T00:00:00')) / 86400000) + 1;
+  }
+  return { complete, have, total };
+}
+
+// A period label has a base (e.g. "Aug 2026") and, for an incomplete trailing
+// bucket, a partial marker rendered on its OWN line — see the three formatters below.
+function periodLabelParts(key, unit) {
+  let base;
+  if (unit === 'day') base = key;
+  else if (unit === 'week') base = 'W/C ' + key;
+  else base = new Date(key + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  const cov = periodCoverage(key, unit, viewMaxDay);
+  return { base, marker: cov.complete ? '' : `(partial · ${cov.have}/${cov.total}d)` };
+}
+
+// Chart axis label: an array makes Chart.js render each element on its own line.
+function formatPeriodChart(key, unit) {
+  const { base, marker } = periodLabelParts(key, unit);
+  return marker ? [base, marker] : base;
+}
+
+// Table header: marker on its own line, de-emphasised.
+function formatPeriodHtml(key, unit) {
+  const { base, marker } = periodLabelParts(key, unit);
+  return marker ? `${base}<br><span class="period-partial">${marker}</span>` : base;
+}
+
+// Single-string form — kept for any plain-text consumer (tooltips, etc.).
+function formatPeriod(key, unit) {
+  const { base, marker } = periodLabelParts(key, unit);
+  return marker ? `${base} ${marker}` : base;
+}
+
+function applyFilters() {
+  const merchantCountry = document.getElementById('filterMerchantCountry').value;
+  const country = document.getElementById('filterCountry').value;
+  const network = document.getElementById('filterNetwork').value;
+  const checkoutMode = document.getElementById('filterCheckoutMode').value;
+  const checkoutType = document.getElementById('filterCheckoutType').value;
+  const cohort = document.getElementById('filterCohort').value;
+  const newEx = document.getElementById('filterNewExisting').value;
+  const nc4 = document.getElementById('filterNewConsumer4way').value;
+  const wt = document.getElementById('filterWindowType').value;
+  const sa = document.getElementById('filterSourceApp').value;
+  const pe = document.getElementById('filterPmEligibility').value;
+  const dateStart = document.getElementById('dateStart').value;
+  const dateEnd = document.getElementById('dateEnd').value;
+  const peActive = pmEligibilityActive();
+
+  return rawData.filter(row => {
+    if (merchantCountry !== 'All' && row.mc !== merchantCountry) return false;
+    if (country !== 'All' && row.c !== country) return false;
+    if (network !== 'All' && row.nw !== network) return false;
+    if (checkoutMode !== 'All' && row.cm !== checkoutMode) return false;
+    if (checkoutType !== 'All' && row.ct !== checkoutType) return false;
+    if (cohort !== 'All' && row.co !== cohort) return false;
+    if (newEx !== 'All' && row.n !== newEx) return false;
+    if (nc4 !== 'All' && row.nc !== nc4) return false;
+    if (wt !== 'All' && row.wt !== wt) return false;
+    if (sa !== 'All' && rowSourceApp(row) !== sa) return false;
+    if (pe !== 'All' && row.pe !== pe) return false;
+    if (peActive && PRE_PM_STAGES.has(row.r)) return false;
+    if (peActive && row.d < PM_DATA_FLOOR) return false;
+    if (peActive && row.pme !== 'Yes') return false;   // PM-enabled merchants only (apples-to-apples)
+    if (peActive && row.ct !== 'One-time') return false; // exclude On-file — never sees the Lightweight page
+    if (dateStart && row.d < dateStart) return false;
+    if (dateEnd && row.d > dateEnd) return false;
+    if (!STAGES.includes(row.r) && row.r !== 'NULL') return false;
+    return true;
+  });
+}
+
+function aggregate(filtered) {
+  const unit = document.getElementById('timeUnit').value;
+  // { periodKey: { stage: tokens } }
+  const periods = {};
+  const stageTotals = {};
+  let maxDay = '';
+
+  filtered.forEach(row => {
+    const pk = getPeriodKey(row.d, unit);
+    if (!periods[pk]) periods[pk] = {};
+    periods[pk][row.r] = (periods[pk][row.r] || 0) + row.t;
+    stageTotals[row.r] = (stageTotals[row.r] || 0) + row.t;
+    if (row.d > maxDay) maxDay = row.d;
+  });
+
+  const sortedPeriods = Object.keys(periods).sort();
+  return { periods, sortedPeriods, stageTotals, unit, maxDay };
+}
+
+function buildFunnelDatasets(periods, sortedPeriods) {
+  const stagesForView = pmEligibilityActive()
+    ? STAGES.filter(s => !PRE_PM_STAGES.has(s))
+    : STAGES;
+  return [...stagesForView].reverse().map(stage => ({
+    label: stageDisplay(stage),
+    data: sortedPeriods.map(p => {
+      const bucket = periods[p] || {};
+      const periodTotal = Object.values(bucket).reduce((a, b) => a + b, 0);
+      const stageVal = bucket[stage] || 0;
+      return periodTotal > 0 ? +(100 * stageVal / periodTotal).toFixed(2) : 0;
+    }),
+    backgroundColor: STAGE_COLORS[stage],
+    borderWidth: 0
+  }));
+}
+
+function funnelChartOptions(showLegend) {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false,
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+      y: { stacked: true, max: 100, ticks: { callback: v => v + '%', font: { size: 11 } }, grid: { color: '#f3f4f6' } }
+    },
+    plugins: {
+      legend: showLegend
+        ? { display: true, position: 'right', reverse: true, labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } }
+        : { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%` } }
+    }
+  };
+}
+
+function destroyFunnelCharts() {
+  if (chart) { chart.destroy(); chart = null; }
+  funnelCharts.forEach(c => c.destroy());
+  funnelCharts = [];
+}
+
+// CVR trend line + event markers. Single-country only: an all-traffic aggregate
+// can't isolate one country's launch/incident impact, so this panel (and its
+// country-scoped markers) only render when exactly one country is selected.
+function updateCvrChart(data) {
+  const { periods, sortedPeriods, unit } = data;
+  const card = document.getElementById('cvrTimelineCard');
+  const mcFilter = document.getElementById('filterMerchantCountry').value;
+  const cFilter = document.getElementById('filterCountry').value;
+  const activeCountry = mcFilter !== 'All' ? mcFilter : cFilter !== 'All' ? cFilter : 'All';
+
+  if (cvrChart) { cvrChart.destroy(); cvrChart = null; }
+
+  if (activeCountry === 'All') { card.hidden = true; return; }
+  card.hidden = false;
+
+  const labels = sortedPeriods.map(p => formatPeriodChart(p, unit));
+  const cvrData = sortedPeriods.map(p => {
+    const periodTotal = Object.values(periods[p]).reduce((a, b) => a + b, 0);
+    const completed = periods[p]['99. Completed'] || 0;
+    return periodTotal > 0 ? (100 * completed / periodTotal) : null;
+  });
+
+  const lastIdx = sortedPeriods.length - 1;
+  const lastPartial = lastIdx >= 0 && !periodCoverage(sortedPeriods[lastIdx], unit, viewMaxDay).complete;
+  const baseR = sortedPeriods.length > 60 ? 0 : 2;
+
+  const sub = document.getElementById('cvrTimelineSub');
+  if (sub) sub.textContent = `${activeCountry} · Completed ÷ total sessions per ${unit}. Vertical markers: launches/ramps (blue) & incidents (red), scoped to ${activeCountry}.`
+    + (lastPartial ? ' Dashed tail = incomplete final period (partial data).' : '');
+
+  cvrChart = new Chart(document.getElementById('cvrTimelineChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: activeCountry + ' CVR',
+        data: cvrData,
+        borderColor: '#111827',
+        backgroundColor: 'rgba(17,24,39,0.06)',
+        borderWidth: 2,
+        pointRadius: lastPartial ? sortedPeriods.map((_, i) => i === lastIdx ? Math.max(baseR, 4) : baseR) : baseR,
+        pointBackgroundColor: lastPartial ? sortedPeriods.map((_, i) => i === lastIdx ? '#fff' : '#111827') : '#111827',
+        pointBorderColor: '#111827',
+        pointBorderWidth: lastPartial ? sortedPeriods.map((_, i) => i === lastIdx ? 2 : 0) : 0,
+        segment: { borderDash: ctx => lastPartial && ctx.p1DataIndex === lastIdx ? [5, 4] : undefined },
+        tension: 0.25,
+        spanGaps: true,
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, autoSkip: true, maxRotation: 90, maxTicksLimit: 24 } },
+        y: { ticks: { callback: v => v + '%', font: { size: 11 } }, grid: { color: '#f3f4f6' }, grace: '10%' }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `CVR: ${ctx.parsed.y != null ? ctx.parsed.y.toFixed(2) : '—'}%` } },
+        annotation: { annotations: buildMilestoneAnnotations(sortedPeriods, unit) }
+      }
+    }
+  });
+}
+
+function updateChart(data) {
+  const { periods, sortedPeriods, unit } = data;
+  const splitBy = activeSplitBy;
+  const labels = sortedPeriods.map(p => formatPeriodChart(p, unit));
+  const host = document.getElementById('funnelChartHost');
+  const splitLabel = document.getElementById('funnelSplitLabel');
+
+  destroyFunnelCharts();
+
+  if (splitBy === 'none') {
+    splitLabel.textContent = '';
+    host.innerHTML = '<div class="chart-container"><canvas id="funnelChart"></canvas></div>';
+    const datasets = buildFunnelDatasets(periods, sortedPeriods);
+    chart = new Chart(document.getElementById('funnelChart'), {
+      type: 'bar',
+      data: { labels, datasets },
+      options: funnelChartOptions(true),
+      plugins: [dataLabelPlugin]
+    });
+    return;
+  }
+
+  // Trellis mode — bucket rawData (with current filters minus the split dim) by period × splitVal × stage
+  const filtered = applyFilters();
+  const splitTotals = {};
+  filtered.forEach(row => { const k = rowValue(row, splitBy); splitTotals[k] = (splitTotals[k] || 0) + row.t; });
+  let splitVals = Object.entries(splitTotals)
+    .filter(([k]) => k && k !== 'undefined' && k !== 'null' && k !== 'NULL')
+    .sort(splitEntrySort(splitBy))
+    .slice(0, MAX_TRELLIS_PANELS)
+    .map(([k, v]) => ({ key: k, vol: v }));
+
+  if (splitVals.length === 0) {
+    splitLabel.textContent = '— no data for this split';
+    host.innerHTML = '<div class="chart-container"><canvas id="funnelChart"></canvas></div>';
+    return;
+  }
+
+  const grandTotal = splitVals.reduce((a, s) => a + s.vol, 0);
+  splitLabel.textContent = '· split by ' + SPLIT_LABELS[splitBy] +
+    ' (' + splitVals.length + ' panel' + (splitVals.length === 1 ? '' : 's') + ')';
+
+  // Per-panel: period → stage → tokens
+  const panels = {};
+  splitVals.forEach(s => { panels[s.key] = {}; });
+  filtered.forEach(row => {
+    const sk = rowValue(row, splitBy);
+    if (!panels[sk]) return;
+    const pk = getPeriodKey(row.d, unit);
+    if (!panels[sk][pk]) panels[sk][pk] = {};
+    panels[sk][pk][row.r] = (panels[sk][pk][row.r] || 0) + row.t;
+  });
+
+  const grid = document.createElement('div');
+  grid.className = 'funnel-grid';
+  splitVals.forEach((s, idx) => {
+    const pct = grandTotal > 0 ? (100 * s.vol / grandTotal).toFixed(1) + '%' : '—';
+    const panel = document.createElement('div');
+    panel.className = 'funnel-panel';
+    panel.innerHTML = `<h3>${displayKey(splitBy, s.key)}<span class="panel-meta">${fmt(s.vol)} sessions · ${pct} of total</span></h3>
+      <div class="chart-container"><canvas id="funnelChart_${idx}"></canvas></div>`;
+    grid.appendChild(panel);
+  });
+  host.innerHTML = '';
+  host.appendChild(grid);
+
+  splitVals.forEach((s, idx) => {
+    const datasets = buildFunnelDatasets(panels[s.key], sortedPeriods);
+    const c = new Chart(document.getElementById('funnelChart_' + idx), {
+      type: 'bar',
+      data: { labels, datasets },
+      options: funnelChartOptions(idx === splitVals.length - 1),
+      plugins: [dataLabelPlugin]
+    });
+    funnelCharts.push(c);
+  });
+}
+
+function getSubReasonAgg(panel) {
+  if (!subReasonData) return { periods: {}, subsByStage: {} };
+  const unit = document.getElementById('timeUnit').value;
+  const merchantCountry = document.getElementById('filterMerchantCountry').value;
+  const country = document.getElementById('filterCountry').value;
+  const network = document.getElementById('filterNetwork').value;
+  const checkoutMode = document.getElementById('filterCheckoutMode').value;
+  const checkoutType = document.getElementById('filterCheckoutType').value;
+  const cohort = document.getElementById('filterCohort').value;
+  const newEx = document.getElementById('filterNewExisting').value;
+  const nc4 = document.getElementById('filterNewConsumer4way').value;
+  const wt = document.getElementById('filterWindowType').value;
+  const sa = document.getElementById('filterSourceApp').value;
+  const pe = document.getElementById('filterPmEligibility').value;
+  const dateStart = document.getElementById('dateStart').value;
+  const dateEnd = document.getElementById('dateEnd').value;
+  const peActive = pmEligibilityActive();
+
+  const filtered = subReasonData.filter(row => {
+    if (merchantCountry !== 'All' && row.mc !== merchantCountry) return false;
+    if (country !== 'All' && row.c !== country) return false;
+    if (network !== 'All' && row.nw !== network) return false;
+    if (checkoutMode !== 'All' && row.cm !== checkoutMode) return false;
+    if (checkoutType !== 'All' && row.ct !== checkoutType) return false;
+    if (cohort !== 'All' && row.co !== cohort) return false;
+    if (newEx !== 'All' && row.n !== newEx) return false;
+    if (nc4 !== 'All' && row.nc !== nc4) return false;
+    if (wt !== 'All' && row.wt !== wt) return false;
+    if (sa !== 'All' && rowSourceApp(row) !== sa) return false;
+    if (pe !== 'All' && row.pe !== pe) return false;
+    if (peActive && PRE_PM_STAGES.has(row.r)) return false;
+    if (peActive && row.d < PM_DATA_FLOOR) return false;
+    if (peActive && row.pme !== 'Yes') return false;   // PM-enabled merchants only (apples-to-apples)
+    if (peActive && row.ct !== 'One-time') return false; // exclude On-file — never sees the Lightweight page
+    if (dateStart && row.d < dateStart) return false;
+    if (dateEnd && row.d > dateEnd) return false;
+    if (!STAGES.includes(row.r) && row.r !== 'NULL') return false;
+    if (panel && rowValue(row, activeSplitBy) !== panel.key) return false;
+    return true;
+  });
+
+  const periods = {};
+  const subsByStage = {};
+  filtered.forEach(row => {
+    const pk = getPeriodKey(row.d, unit);
+    if (!periods[pk]) periods[pk] = {};
+    const key = row.r + '||' + row.sr;
+    periods[pk][key] = (periods[pk][key] || 0) + row.t;
+    if (!subsByStage[row.r]) subsByStage[row.r] = new Set();
+    subsByStage[row.r].add(row.sr);
+  });
+  return { periods, subsByStage };
+}
+
+function getPanelKeys(splitBy) {
+  if (splitBy === 'none') return [];
+  const filtered = applyFilters();
+  const totals = {};
+  filtered.forEach(row => { const k = rowValue(row, splitBy); totals[k] = (totals[k] || 0) + row.t; });
+  return Object.entries(totals)
+    .filter(([k]) => k && k !== 'undefined' && k !== 'null' && k !== 'NULL')
+    .sort(splitEntrySort(splitBy))
+    .slice(0, MAX_TRELLIS_PANELS)
+    .map(([k, v]) => ({ key: k, vol: v }));
+}
+
+function aggregateForPanel(panel) {
+  const unit = document.getElementById('timeUnit').value;
+  const filtered = applyFilters().filter(row => !panel || rowValue(row, activeSplitBy) === panel.key);
+  const periods = {};
+  const stageTotals = {};
+  filtered.forEach(row => {
+    const pk = getPeriodKey(row.d, unit);
+    if (!periods[pk]) periods[pk] = {};
+    periods[pk][row.r] = (periods[pk][row.r] || 0) + row.t;
+    stageTotals[row.r] = (stageTotals[row.r] || 0) + row.t;
+  });
+  return { periods, sortedPeriods: Object.keys(periods).sort(), stageTotals, unit };
+}
+
+function updateTable(data) {
+  const host = document.getElementById('stageBreakdownHost');
+  host.innerHTML = '';
+
+  // Section header (always present)
+  const splitNote = activeSplitBy !== 'none'
+    ? ` <span style="font-size:11px;color:var(--text-muted);font-weight:400">· split by ${SPLIT_LABELS[activeSplitBy]}</span>`
+    : '';
+  const peNote = pmEligibilityActive()
+    ? ` <span style="font-size:11px;color:var(--text-muted);font-weight:400">· post-credit-check only</span>`
+    : '';
+  const loading = isAnyStageLoading();
+  const loadingNote = loading
+    ? ` <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:12px">· loading sub-reasons…</span>`
+    : '';
+  const headerCard = document.createElement('div');
+  headerCard.className = 'card';
+  headerCard.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:14px 20px';
+  headerCard.innerHTML = `<h2 style="margin:0">Stage Breakdown <span style="font-size:11px;color:var(--text-muted);font-weight:400">· illustrative %</span>${splitNote}${peNote}${loadingNote}</h2>
+    <button class="expand-btn" id="expandAllBtn" title="Expand all stages to show sub-reasons">${loading ? 'Loading sub-reasons…' : (allExpanded ? 'Collapse All' : 'Expand All')}</button>`;
+  host.appendChild(headerCard);
+  headerCard.querySelector('#expandAllBtn').addEventListener('click', toggleAll);
+
+  if (activeSplitBy === 'none') {
+    appendStageCard(host, data, null, 0);
+    applyPendingExpand();
+    return;
+  }
+
+  const panels = getPanelKeys(activeSplitBy);
+  if (panels.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'card';
+    empty.innerHTML = '<p style="color:var(--text-muted);font-size:13px;margin:0">No data for this split.</p>';
+    host.appendChild(empty);
+    return;
+  }
+  appendMultiPanelStageCard(host, panels.map(p => ({ panel: p, data: aggregateForPanel(p) })));
+  applyPendingExpand();
+}
+
+function appendStageCard(host, data, panel, panelIdx) {
+  const card = document.createElement('div');
+  card.className = 'card table-card';
+  const panelHeader = panel
+    ? `<h3 style="font-size:13px;font-weight:600;margin-bottom:10px">${panel.key} <span style="font-size:11px;color:var(--text-muted);font-weight:400">· ${fmt(panel.vol)} sessions</span></h3>`
+    : '';
+  card.innerHTML = panelHeader + `<table>
+    <thead class="stage-head"></thead>
+    <tbody class="stage-table"></tbody>
+  </table>`;
+  host.appendChild(card);
+  buildStageTable(card.querySelector('.stage-head'), card.querySelector('.stage-table'), data, panel, panelIdx);
+}
+
+function buildStageTable(thead, tbody, data, panel, panelIdx) {
+  const { periods, sortedPeriods, unit } = data;
+  const subAgg = getSubReasonAgg(panel);
+
+  // Build header
+  const headerTr = document.createElement('tr');
+  headerTr.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:1">Stage</th>'
+    + sortedPeriods.map(p => `<th style="text-align:right;white-space:nowrap">${formatPeriodHtml(p, unit)}</th>`).join('');
+  thead.appendChild(headerTr);
+
+  // Top row: Total Initiated
+  const topTr = document.createElement('tr');
+  topTr.style.fontWeight = '600';
+  topTr.innerHTML = '<td style="position:sticky;left:0;background:var(--card);z-index:1">Total Initiated</td>'
+    + sortedPeriods.map(p => {
+      const periodTotal = Object.values(periods[p]).reduce((a, b) => a + b, 0);
+      return `<td class="num">${fmt(periodTotal)}</td>`;
+    }).join('');
+  tbody.appendChild(topTr);
+
+  // Stage rows with inline sub-reasons
+  const stagesForView = pmEligibilityActive()
+    ? STAGES.filter(s => !PRE_PM_STAGES.has(s))
+    : STAGES;
+  stagesForView.forEach(stage => {
+    const isCompleted = stage === '99. Completed';
+    // Pre-load (this stage hasn't been fetched yet): assume sub-reasons exist so
+    // the ▶ toggle is clickable — the click triggers the per-stage fetch.
+    // Post-load: use the actual aggregated sub-reason data.
+    const hasSubs = loadedStages.has(stage)
+      ? (subAgg.subsByStage[stage] && subAgg.subsByStage[stage].size > 0)
+      : !isCompleted;
+    const stageId = stage.replace(/[^a-zA-Z0-9]/g, '_') + '_p' + panelIdx;
+    const tr = document.createElement('tr');
+    if (hasSubs) tr.classList.add('stage-row');
+    if (isCompleted) {
+      tr.style.fontWeight = '700';
+      tr.style.fontSize = '15px';
+      tr.style.borderTop = '2px solid var(--border)';
+      tr.style.background = 'var(--accent-light)';
+    }
+
+    const toggleHtml = stageToggleMarkup(stageId, stage, hasSubs);
+    const stageTd = `<td style="position:sticky;left:0;background:${isCompleted ? 'var(--accent-light)' : 'var(--card)'};z-index:1">${toggleHtml}<span class="stage-dot" style="background:${STAGE_COLORS[stage]}"></span>${stageDisplay(stage)}</td>`;
+
+    const cells = sortedPeriods.map((p, i) => {
+      const periodTotal = Object.values(periods[p]).reduce((a, b) => a + b, 0);
+      const completed = periods[p]['99. Completed'] || 0;
+      const vol = periods[p][stage] || 0;
+      const pctVal = periodTotal > 0 ? (100 * vol / periodTotal) : 0;
+      const cvr = periodTotal > 0 ? (100 * completed / periodTotal) : 0;
+
+      let prevPct = null;
+      if (i > 0) {
+        const pp = sortedPeriods[i - 1];
+        const prevTotal = Object.values(periods[pp]).reduce((a, b) => a + b, 0);
+        if (isCompleted) {
+          prevPct = prevTotal > 0 ? (100 * (periods[pp]['99. Completed'] || 0) / prevTotal) : null;
+        } else {
+          prevPct = prevTotal > 0 ? (100 * (periods[pp][stage] || 0) / prevTotal) : null;
+        }
+      }
+
+      if (isCompleted) return `<td class="num" style="background:${heatColor(cvr, true)};color:var(--accent)">${cvr.toFixed(2)}%${trendArrow(cvr, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(vol)}</span></td>`;
+      return `<td class="num" style="background:${heatColor(pctVal, false)}">-${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(vol)}</span></td>`;
+    }).join('');
+
+    tr.innerHTML = stageTd + cells;
+    if (hasSubs) {
+      tr.addEventListener('click', () => toggleStage(stageId, stage));
+    }
+    tbody.appendChild(tr);
+
+    // While this stage's sub-reasons file is fetching, show an inline loading row.
+    if (stageIsLoading(stage)) appendStageLoadingRow(tbody, sortedPeriods.length + 1);
+
+    // Sub-reason rows (hidden by default unless allExpanded).
+    // Guard: hasSubs may be a hint (pre-load) where actual sub-data isn't ready yet.
+    if (hasSubs && subReasonData && subAgg.subsByStage[stage]) {
+      const subs = [...subAgg.subsByStage[stage]].map(sr => {
+        const total = sortedPeriods.reduce((sum, p) => sum + (subAgg.periods[p]?.[stage + '||' + sr] || 0), 0);
+        return { sr, total };
+      }).sort((a, b) => b.total - a.total);
+
+      subs.forEach(({ sr }) => {
+        const subTr = document.createElement('tr');
+        subTr.classList.add('sub-row', 'sub-' + stageId);
+        if (allExpanded) subTr.classList.add('visible');
+
+        const subCells = sortedPeriods.map((p, i) => {
+          const val = subAgg.periods[p]?.[stage + '||' + sr] || 0;
+          const periodTotal = Object.values(periods[p]).reduce((a, b) => a + b, 0);
+          const pctV = periodTotal > 0 ? (100 * val / periodTotal) : 0;
+          let prevPct = null;
+          if (i > 0) {
+            const pp = sortedPeriods[i - 1];
+            const prevTotal = Object.values(periods[pp]).reduce((a, b) => a + b, 0);
+            const prevVal = subAgg.periods[pp]?.[stage + '||' + sr] || 0;
+            prevPct = prevTotal > 0 ? (100 * prevVal / prevTotal) : null;
+          }
+          const isComp = stage === '99. Completed';
+          if (isComp) return `<td class="num" style="background:var(--accent-light)">${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(val)}</span></td>`;
+          return `<td class="num" style="background:${heatColor(pctV, false)}">-${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(val)}</span></td>`;
+        }).join('');
+
+        subTr.innerHTML = `<td style="position:sticky;left:0;background:var(--card);z-index:1;padding-left:36px;color:var(--text-muted);font-size:12px">${subReasonLabel(stage, sr)}</td>` + subCells;
+        tbody.appendChild(subTr);
+      });
+    }
+  });
+}
+
+function appendMultiPanelStageCard(host, panelDatas) {
+  // Union of period keys so all panels share the same date columns
+  const allPeriods = new Set();
+  let unit = 'month';
+  panelDatas.forEach(({ data }) => {
+    unit = data.unit;
+    data.sortedPeriods.forEach(p => allPeriods.add(p));
+  });
+  const sortedPeriods = [...allPeriods].sort();
+  const subAggs = panelDatas.map(({ panel }) => getSubReasonAgg(panel));
+
+  const totalsFor = (data, p) => {
+    const bucket = data.periods[p] || {};
+    return Object.values(bucket).reduce((a, b) => a + b, 0);
+  };
+
+  const card = document.createElement('div');
+  card.className = 'card table-card';
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+
+  // Row 1: panel-name header spanning each panel's periods
+  const r1 = document.createElement('tr');
+  r1.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:3;border-bottom:0"></th>'
+    + panelDatas.map(({ panel }, pIdx) =>
+        `<th colspan="${sortedPeriods.length}" style="text-align:center;padding:8px 10px;border-bottom:1px solid var(--border);background:#fafafa;font-size:12px;font-weight:600;${pIdx > 0 ? 'border-left:2px solid var(--border);' : ''}">${displayKey(activeSplitBy, panel.key)} <span style="font-size:11px;color:var(--text-muted);font-weight:400">· ${fmt(panel.vol)} sessions</span></th>`
+      ).join('');
+  thead.appendChild(r1);
+
+  // Row 2: "Stage" + repeated date columns per panel
+  const r2 = document.createElement('tr');
+  r2.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:3">Stage</th>'
+    + panelDatas.map((_, pIdx) =>
+        sortedPeriods.map((p, i) =>
+          `<th style="text-align:right;white-space:nowrap;${i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : ''}">${formatPeriodHtml(p, unit)}</th>`
+        ).join('')
+      ).join('');
+  thead.appendChild(r2);
+
+  // Total Initiated row
+  const topTr = document.createElement('tr');
+  topTr.style.fontWeight = '600';
+  let topHtml = '<td style="position:sticky;left:0;background:var(--card);z-index:2">Total Initiated</td>';
+  panelDatas.forEach(({ data }, pIdx) => {
+    sortedPeriods.forEach((p, i) => {
+      const periodTotal = totalsFor(data, p);
+      const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+      topHtml += `<td class="num" style="${leftBorder}">${fmt(periodTotal)}</td>`;
+    });
+  });
+  topTr.innerHTML = topHtml;
+  tbody.appendChild(topTr);
+
+  // Stage rows
+  const stagesForViewMulti = pmEligibilityActive()
+    ? STAGES.filter(s => !PRE_PM_STAGES.has(s))
+    : STAGES;
+  stagesForViewMulti.forEach(stage => {
+    const isCompleted = stage === '99. Completed';
+    const hasSubs = loadedStages.has(stage)
+      ? subAggs.some(sa => sa.subsByStage[stage] && sa.subsByStage[stage].size > 0)
+      : (stage !== '99. Completed');
+    const stageId = stage.replace(/[^a-zA-Z0-9]/g, '_');
+    const tr = document.createElement('tr');
+    if (hasSubs) tr.classList.add('stage-row');
+    if (isCompleted) {
+      tr.style.fontWeight = '700';
+      tr.style.fontSize = '15px';
+      tr.style.borderTop = '2px solid var(--border)';
+      tr.style.background = 'var(--accent-light)';
+    }
+
+    const toggleHtml = stageToggleMarkup(stageId, stage, hasSubs);
+    const stageTd = `<td style="position:sticky;left:0;background:${isCompleted ? 'var(--accent-light)' : 'var(--card)'};z-index:2">${toggleHtml}<span class="stage-dot" style="background:${STAGE_COLORS[stage]}"></span>${stageDisplay(stage)}</td>`;
+
+    let cellsHtml = '';
+    panelDatas.forEach(({ data }, pIdx) => {
+      sortedPeriods.forEach((p, i) => {
+        const periodTotal = totalsFor(data, p);
+        const completed = data.periods[p]?.['99. Completed'] || 0;
+        const vol = data.periods[p]?.[stage] || 0;
+        const pctVal = periodTotal > 0 ? (100 * vol / periodTotal) : 0;
+        const cvr = periodTotal > 0 ? (100 * completed / periodTotal) : 0;
+
+        let prevPct = null;
+        if (i > 0) {
+          const pp = sortedPeriods[i - 1];
+          const prevTotal = totalsFor(data, pp);
+          if (isCompleted) {
+            prevPct = prevTotal > 0 ? (100 * (data.periods[pp]?.['99. Completed'] || 0) / prevTotal) : null;
+          } else {
+            prevPct = prevTotal > 0 ? (100 * (data.periods[pp]?.[stage] || 0) / prevTotal) : null;
+          }
+        }
+        const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+        if (isCompleted) {
+          cellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(cvr, true)};color:var(--accent)">${cvr.toFixed(2)}%${trendArrow(cvr, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(vol)}</span></td>`;
+        } else {
+          cellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(pctVal, false)}">-${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(vol)}</span></td>`;
+        }
+      });
+    });
+    tr.innerHTML = stageTd + cellsHtml;
+    if (hasSubs) tr.addEventListener('click', () => toggleStage(stageId, stage));
+    tbody.appendChild(tr);
+
+    // While this stage's sub-reasons file is fetching, show an inline loading row
+    // spanning the sticky stage column + every panel's period columns.
+    if (stageIsLoading(stage)) appendStageLoadingRow(tbody, panelDatas.length * sortedPeriods.length + 1);
+
+    // Sub-rows: union of sub-reasons across panels, ordered by combined volume desc.
+    // Guard: hasSubs may be a hint (pre-load) where actual sub-data isn't ready yet.
+    if (hasSubs && subReasonData) {
+      const allSubs = new Set();
+      subAggs.forEach(sa => { if (sa.subsByStage[stage]) sa.subsByStage[stage].forEach(s => allSubs.add(s)); });
+      const subOrdered = [...allSubs].map(sr => {
+        let total = 0;
+        subAggs.forEach((sa, pIdx) => {
+          sortedPeriods.forEach(p => { total += sa.periods[p]?.[stage + '||' + sr] || 0; });
+        });
+        return { sr, total };
+      }).sort((a, b) => b.total - a.total);
+
+      subOrdered.forEach(({ sr }) => {
+        const subTr = document.createElement('tr');
+        subTr.classList.add('sub-row', 'sub-' + stageId);
+        if (allExpanded) subTr.classList.add('visible');
+
+        let subCellsHtml = '';
+        panelDatas.forEach(({ data }, pIdx) => {
+          const sa = subAggs[pIdx];
+          sortedPeriods.forEach((p, i) => {
+            const val = sa.periods[p]?.[stage + '||' + sr] || 0;
+            const periodTotal = totalsFor(data, p);
+            const pctV = periodTotal > 0 ? (100 * val / periodTotal) : 0;
+            let prevPct = null;
+            if (i > 0) {
+              const pp = sortedPeriods[i - 1];
+              const prevTotal = totalsFor(data, pp);
+              const prevVal = sa.periods[pp]?.[stage + '||' + sr] || 0;
+              prevPct = prevTotal > 0 ? (100 * prevVal / prevTotal) : null;
+            }
+            const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+            const isComp = stage === '99. Completed';
+            if (isComp) {
+              subCellsHtml += `<td class="num" style="${leftBorder}background:var(--accent-light)">${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(val)}</span></td>`;
+            } else {
+              subCellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(pctV, false)}">-${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(val)}</span></td>`;
+            }
+          });
+        });
+
+        subTr.innerHTML = `<td style="position:sticky;left:0;background:var(--card);z-index:2;padding-left:36px;color:var(--text-muted);font-size:12px">${subReasonLabel(stage, sr)}</td>` + subCellsHtml;
+        tbody.appendChild(subTr);
+      });
+    }
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  card.appendChild(table);
+  host.appendChild(card);
+}
+
+// When the user clicks a stage row before that stage's sub-reasons file has
+// loaded, we remember the stageId here and auto-expand it after the post-load
+// re-render. Cleared once consumed.
+let pendingExpandStage = null;
+
+function toggleStage(stageId, stage) {
+  // Per-stage lazy fetch: if this stage's slice isn't loaded yet, kick it off
+  // and remember to auto-expand on the post-load re-render.
+  if (stage && !loadedStages.has(stage)) {
+    pendingExpandStage = stageId;
+    loadStageSubReasons(stage);
+    return;
+  }
+  const rows = document.querySelectorAll('.sub-' + stageId);
+  const toggle = document.querySelector(`.expand-toggle[data-stage="${stageId}"]`);
+  const isOpen = toggle && toggle.classList.contains('open');
+  rows.forEach(r => r.classList.toggle('visible', !isOpen));
+  if (toggle) toggle.classList.toggle('open', !isOpen);
+}
+
+async function toggleAll() {
+  // Find any stages we haven't loaded yet (skip Completed — no sub-reasons).
+  const stagesToLoad = STAGES.filter(s => s !== '99. Completed' && !loadedStages.has(s));
+  if (stagesToLoad.length > 0) {
+    allExpanded = true;
+    const btn = document.getElementById('expandAllBtn');
+    if (btn) btn.textContent = 'Loading sub-reasons…';
+    // Parallel fetch (browser limits ~6 concurrent connections per host) with a
+    // single re-render at the end instead of one per stage.
+    await Promise.all(stagesToLoad.map(s => loadStageSubReasons(s, { render: false })));
+    render();
+    return;
+  }
+  allExpanded = !allExpanded;
+  document.querySelectorAll('.sub-row').forEach(r => r.classList.toggle('visible', allExpanded));
+  document.querySelectorAll('.expand-toggle').forEach(t => t.classList.toggle('open', allExpanded));
+  document.getElementById('expandAllBtn').textContent = allExpanded ? 'Collapse All' : 'Expand All';
+}
+
+// Called after each re-render. Only consumes pendingExpandStage if the
+// freshly-built table actually has sub-rows for the pending stage — otherwise
+// we'd consume it on the pre-fetch "loading" render and lose the auto-expand
+// once data arrives.
+function applyPendingExpand() {
+  if (pendingExpandStage) {
+    const stageId = pendingExpandStage;
+    const subRowExists = document.querySelector('.sub-' + stageId);
+    if (subRowExists) {
+      pendingExpandStage = null;
+      setTimeout(() => toggleStage(stageId), 0);
+    }
+  }
+  const btn = document.getElementById('expandAllBtn');
+  if (btn && btn.textContent === 'Loading sub-reasons…' && !isAnyStageLoading()) {
+    btn.textContent = allExpanded ? 'Collapse All' : 'Expand All';
+  }
+}
+
+
+async function loadFullData() {
+  if (fullDataLoaded || loadingFull) return;
+  loadingFull = true;
+  document.getElementById('data-range').textContent += ' — loading 2025 data...';
+  try {
+    const [dResp, srResp] = await Promise.all([
+      fetch('data.json?v=' + Date.now()),
+      fetch('subreasons.json?v=' + Date.now())
+    ]);
+    rawData = await dResp.json();
+    subReasonData = await srResp.json();
+    // The historical file is a superset, so mark every stage as loaded — bypass
+    // the per-stage lazy loader entirely for the pre-2026 view.
+    STAGES.forEach(s => loadedStages.add(s));
+    fullDataLoaded = true;
+    document.getElementById('data-range').textContent = 'Data available: 2026-02-02 to ' + document.getElementById('dateEnd').value;
+  } catch (e) {
+    console.warn('Failed to load full data:', e);
+    document.getElementById('data-range').textContent = 'Data available: 2026-01-01 to ' + document.getElementById('dateEnd').value + ' (2025 load failed)';
+  }
+  loadingFull = false;
+}
+
+// Filters that have no effect in Partner cohort view (cash-data.json only
+// carries date × stage). When cohort=Cash these get disabled + visually dimmed.
+const FILTERS_INAPPLICABLE_TO_CASH = [
+  'filterMerchantCountry','filterCountry','filterNetwork',
+  'filterCheckoutMode','filterCheckoutType','filterNewExisting',
+  'filterNewConsumer4way','filterWindowType','filterSourceApp'
+  // filterPmEligibility WAS in this list but cash-data.json now carries the
+  // pe dimension on every row, so the filter and pill both apply in Cash view.
+];
+
+function setCashFilterLockdown(isCashView) {
+  FILTERS_INAPPLICABLE_TO_CASH.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.disabled = isCashView;
+    el.style.opacity = isCashView ? '0.45' : '';
+    el.style.cursor = isCashView ? 'not-allowed' : '';
+    el.title = isCashView ? "Doesn't apply to the Partner cohort view." : '';
+  });
+}
+
+async function render() {
+  const cohort = document.getElementById('filterCohort').value;
+  const isCashView = cohort === 'Cash';
+  const dateStart = document.getElementById('dateStart').value;
+  const dateEnd = document.getElementById('dateEnd').value;
+
+  // Toggle Cash inline note + chart heading + lock inapplicable filters + show/hide Cash-only controls
+  // Show exactly one Cash note depending on active split.
+  document.getElementById('cashConvNote').hidden = !(isCashView && activeSplitBy === 'none');
+  document.getElementById('cashNVENote').hidden = !(isCashView && activeSplitBy === 'nv');
+  document.getElementById('cashRedirectNote').hidden = !(isCashView && activeSplitBy === 'rd');
+  const peActiveNow = pmEligibilityActive();
+  document.getElementById('funnelChartHeading').textContent = isCashView
+    ? (peActiveNow
+        ? 'Partner cohort — post-credit-check sessions only'
+        : 'Partner cohort — % of sessions by period')
+    : (peActiveNow
+        ? 'Decline Reason Share — post-credit-check sessions only'
+        : 'Decline Reason Share — % of sessions by period (illustrative)');
+  setCashFilterLockdown(isCashView);
+  document.getElementById('filterCashNVEGroup').hidden = !isCashView;
+  document.getElementById('filterCashRedirectGroup').hidden = !isCashView;
+  // Cash-only pills show only when cohort=Cash. Standard pills hide in Cash
+  // view EXCEPT for PM Eligibility, which now also applies to Partner cohort
+  // (the cash-data.json schema carries the pe dimension).
+  const PILLS_VALID_IN_CASH = new Set(['none', 'pe']);
+  document.querySelectorAll('.split-pill').forEach(p => {
+    const isCashPill = p.classList.contains('cash-only-pill');
+    const isCashAllowed = PILLS_VALID_IN_CASH.has(p.dataset.val);
+    p.hidden = isCashView ? (!isCashPill && !isCashAllowed) : isCashPill;
+  });
+  // Force-reset activeSplitBy if it no longer applies to the current view
+  const CASH_VALID_SPLITS = new Set(['none', 'nv', 'rd', 'pe']);
+  if (isCashView && !CASH_VALID_SPLITS.has(activeSplitBy)) {
+    activeSplitBy = 'none';
+    document.querySelectorAll('.split-pill').forEach(b => b.classList.toggle('active', b.dataset.val === 'none'));
+  } else if (!isCashView && (activeSplitBy === 'nv' || activeSplitBy === 'rd')) {
+    activeSplitBy = 'none';
+    document.querySelectorAll('.split-pill').forEach(b => b.classList.toggle('active', b.dataset.val === 'none'));
+  }
+  // Standard split note (intro + bullets). Skipped in Cash view EXCEPT when the
+  // active split is PM Eligibility — that one has its own copy + amber sub-note
+  // and is meaningful in both views.
+  renderSplitNote(isCashView && activeSplitBy !== 'pe');
+
+  if (isCashView) {
+    if (cashData === null) {
+      document.getElementById('funnelChartHost').innerHTML = '<div class="chart-container" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px">Loading Partner cohort data…</div>';
+      await loadCashData();
+    }
+    const filtered = applyCashFilters();
+    viewMaxDay = filtered.reduce((m, r) => r.d > m ? r.d : m, '');
+    const splitKey = ['nv','rd','pe'].includes(activeSplitBy) ? activeSplitBy : null;
+    updateTrafficSplitChart(filtered, splitKey);
+    updateCashChart(filtered, splitKey);
+    updateCashTable(filtered, splitKey);
+    // CVR trend uses the main-funnel '99. Completed' stage; Cash has a different
+    // taxonomy ('15. Completed'), so hide the panel in the Cash view for now.
+    if (cvrChart) { cvrChart.destroy(); cvrChart = null; }
+    document.getElementById('cvrTimelineCard').hidden = true;
+    return;
+  }
+  // Standard view
+  if (dateStart < '2026-01-01' && !fullDataLoaded) {
+    await loadFullData();
+  }
+  const filtered = applyFilters();
+  const data = aggregate(filtered);
+  viewMaxDay = data.maxDay || '';
+  const stdSplit = (activeSplitBy && activeSplitBy !== 'none') ? activeSplitBy : null;
+  updateTrafficSplitChart(filtered, stdSplit);
+  updateChart(data);
+  updateCvrChart(data);
+  updateTable(data);
+}
+
+async function loadCashData() {
+  if (cashData !== null || cashDataLoading) return;
+  cashDataLoading = true;
+  try {
+    const resp = await fetch('cash-data.json?v=' + Date.now());
+    cashData = await resp.json();
+  } catch (e) {
+    console.warn('Failed to load cash-data.json:', e);
+    cashData = [];
+  }
+  cashDataLoading = false;
+}
+
+// Partner cohort stages that precede the provider credit check. The PM
+// eligibility decision in the Cash flow only happens AFTER the credit check
+// (~stage 07 onwards). So when PM Eligibility is active, exclude everything
+// before that point so both panels start at the eligibility-decision point.
+// This is the structural analogue of the main-funnel "post-login" rebase but at
+// a later gate because partner sessions traverse partner-side login, partner account
+// creation, and policy checks before the provider's credit decision runs.
+const CASH_PRE_PM_STAGES = new Set([
+  '00. Pre-login dropoff, no confirmation we reached partner login',
+  '01. Login dropoff, reached partner login',
+  '02. Post-Login',
+  '03. Account Status',
+  '04. Customer lost during account fix-up',
+  '05. Partner Account Creation Failure',
+  '06. Policy',
+  '07.Credit Risk'
+]);
+
+// Apply Cash-only filters to cashData. Returns the filtered subset.
+function applyCashFilters() {
+  const start = document.getElementById('dateStart').value;
+  const end = document.getElementById('dateEnd').value;
+  const nve = document.getElementById('filterCashNVE').value;
+  const rd = document.getElementById('filterCashRedirect').value;
+  const pe = document.getElementById('filterPmEligibility').value;
+  const peActive = pmEligibilityActive();
+  return (cashData || []).filter(r => {
+    if (r.d < start || r.d > end) return false;
+    if (nve !== 'All' && r.nv !== nve) return false;
+    if (rd !== 'All' && r.rd !== rd) return false;
+    if (pe !== 'All' && r.pe !== pe) return false;
+    // Rebase + Mar 2026 floor when PM Eligibility is active. For Cash the
+    // anchor is post-credit-check (stage 07+) because that's where the PM
+    // eligibility decision happens after the partner-side login + partner account.
+    if (peActive && CASH_PRE_PM_STAGES.has(r.s)) return false;
+    if (peActive && r.d < PM_DATA_FLOOR) return false;
+    if (peActive && r.pme !== 'Yes') return false;   // PM-enabled merchants only (apples-to-apples)
+    return true;
+  });
+}
+
+function aggregateCash(rows) {
+  const unit = document.getElementById('timeUnit').value;
+  const periods = {};       // periodKey -> { stage: tokens }
+  const subPeriods = {};    // periodKey -> { stage||sr: tokens }
+  const subsByStage = {};   // stage -> Set of sub-reason strings (with data)
+  rows.forEach(row => {
+    const pk = getPeriodKey(row.d, unit);
+    if (!periods[pk]) periods[pk] = {};
+    periods[pk][row.s] = (periods[pk][row.s] || 0) + row.t;
+    if (row.sr) {
+      if (!subPeriods[pk]) subPeriods[pk] = {};
+      const key = row.s + '||' + row.sr;
+      subPeriods[pk][key] = (subPeriods[pk][key] || 0) + row.t;
+      if (!subsByStage[row.s]) subsByStage[row.s] = new Set();
+      subsByStage[row.s].add(row.sr);
+    }
+  });
+  return { periods, sortedPeriods: Object.keys(periods).sort(), unit, subPeriods, subsByStage };
+}
+
+// Get top-N panel keys for a Cash split-by, ordered by total volume desc.
+function getCashPanelKeys(filteredRows, splitKey) {
+  if (splitKey === 'none' || !['nv','rd','pe'].includes(splitKey)) return [];
+  const totals = {};
+  filteredRows.forEach(r => {
+    const v = r[splitKey] || '(unknown)';
+    totals[v] = (totals[v] || 0) + r.t;
+  });
+  return Object.entries(totals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, MAX_TRELLIS_PANELS)
+    .map(([key, vol]) => ({ key, vol }));
+}
+
+// 100%-stacked bar chart showing how the traffic shares per split-by bucket
+// evolve over time. Rendered for any active split-by (main funnel + Cash).
+function updateTrafficSplitChart(filteredRows, splitKey) {
+  const card = document.getElementById('trafficSplitCard');
+  if (trafficSplitChart) { trafficSplitChart.destroy(); trafficSplitChart = null; }
+  if (!splitKey || splitKey === 'none') { card.hidden = true; return; }
+  card.hidden = false;
+  document.getElementById('trafficSplitHeading').textContent = `Traffic split — by ${SPLIT_LABELS[splitKey]}`;
+
+  // Field accessor: 'sa' is a virtual column derived from apa + iab.
+  const getKey = splitKey === 'sa' ? (r) => rowSourceApp(r) : (r) => r[splitKey];
+  const unit = document.getElementById('timeUnit').value;
+  const periodTotals = {};
+  const totals = {};
+  filteredRows.forEach(row => {
+    const pk = getPeriodKey(row.d, unit);
+    const panelKey = getKey(row) || '(unknown)';
+    if (!periodTotals[pk]) periodTotals[pk] = {};
+    periodTotals[pk][panelKey] = (periodTotals[pk][panelKey] || 0) + (row.t || 0);
+    totals[panelKey] = (totals[panelKey] || 0) + (row.t || 0);
+  });
+  // Top-N panel keys by total volume (caps at MAX_TRELLIS_PANELS for legend clarity).
+  const panelKeys = Object.entries(totals)
+    .sort(splitEntrySort(splitKey))
+    .slice(0, MAX_TRELLIS_PANELS)
+    .map(([k]) => k);
+  const sortedPeriods = Object.keys(periodTotals).sort();
+  const labels = sortedPeriods.map(p => formatPeriodChart(p, unit));
+  // Datasets in reverse panel order so highest-volume bucket renders at the bottom.
+  const datasets = [...panelKeys].reverse().map((key, idx) => ({
+    label: displayKey(splitKey, key),
+    data: sortedPeriods.map(p => {
+      const bucket = periodTotals[p] || {};
+      const total = Object.values(bucket).reduce((a, b) => a + b, 0);
+      const v = bucket[key] || 0;
+      return total > 0 ? +(100 * v / total).toFixed(2) : 0;
+    }),
+    backgroundColor: trafficSplitColor(key, idx),
+    borderWidth: 0
+  }));
+  trafficSplitChart = new Chart(document.getElementById('trafficSplitChart'), {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { stacked: true, max: 100, ticks: { callback: v => v + '%', font: { size: 11 } }, grid: { color: '#f3f4f6' } }
+      },
+      plugins: {
+        legend: { display: true, position: 'right', reverse: true, labels: { boxWidth: 12, font: { size: 11 }, padding: 8 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%` } }
+      }
+    },
+    plugins: [dataLabelPlugin]
+  });
+}
+
+function buildCashDatasetsForRows(rows) {
+  const data = aggregateCash(rows);
+  const { periods, sortedPeriods, unit } = data;
+  const stagesForChart = pmEligibilityActive()
+    ? CASH_STAGES.filter(s => !CASH_PRE_PM_STAGES.has(s))
+    : CASH_STAGES;
+  const orderedStages = [...stagesForChart].reverse();
+  const datasets = orderedStages.map(stage => ({
+    label: stage,
+    data: sortedPeriods.map(p => {
+      const bucket = periods[p] || {};
+      const total = Object.values(bucket).reduce((a, b) => a + b, 0);
+      const v = bucket[stage] || 0;
+      return total > 0 ? +(100 * v / total).toFixed(2) : 0;
+    }),
+    backgroundColor: CASH_STAGE_COLORS[stage] || '#9ca3af',
+    borderWidth: 0
+  }));
+  return { sortedPeriods, unit, datasets, total: rows.reduce((a, r) => a + r.t, 0) };
+}
+
+function updateCashChart(filteredRows, splitKey) {
+  destroyFunnelCharts();
+  const splitLabel = document.getElementById('funnelSplitLabel');
+  const host = document.getElementById('funnelChartHost');
+
+  if (!splitKey) {
+    splitLabel.textContent = '';
+    host.innerHTML = '<div class="chart-container"><canvas id="funnelChart"></canvas></div>';
+    const { sortedPeriods, unit, datasets } = buildCashDatasetsForRows(filteredRows);
+    if (!sortedPeriods.length) return;
+    const labels = sortedPeriods.map(p => formatPeriodChart(p, unit));
+    const opts = funnelChartOptions(true);
+    chart = new Chart(document.getElementById('funnelChart'), {
+      type: 'bar',
+      data: { labels, datasets },
+      options: opts,
+      plugins: [dataLabelPlugin]
+    });
+    return;
+  }
+
+  // Trellis: one panel per split key value, top-N by volume.
+  const panels = getCashPanelKeys(filteredRows, splitKey);
+  splitLabel.textContent = `· split by ${SPLIT_LABELS[splitKey]} (${panels.length} panel${panels.length === 1 ? '' : 's'})`;
+  if (!panels.length) {
+    host.innerHTML = '<div class="chart-container" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px">No data.</div>';
+    return;
+  }
+  host.innerHTML = '<div class="funnel-grid" id="cashTrellis"></div>';
+  const grid = document.getElementById('cashTrellis');
+  // Union of period keys so every panel shares the same x-axis.
+  const allPeriodsSet = new Set();
+  const panelData = panels.map((panel, idx) => {
+    const subset = filteredRows.filter(r => (r[splitKey] || '(unknown)') === panel.key);
+    const data = buildCashDatasetsForRows(subset);
+    data.sortedPeriods.forEach(p => allPeriodsSet.add(p));
+    return { panel, data, subset };
+  });
+  const allPeriods = [...allPeriodsSet].sort();
+  panelData.forEach(({ panel, data }, idx) => {
+    const pdiv = document.createElement('div');
+    pdiv.className = 'funnel-panel';
+    const grandTotal = filteredRows.reduce((a, r) => a + r.t, 0);
+    const share = grandTotal > 0 ? (100 * panel.vol / grandTotal).toFixed(1) : '0.0';
+    pdiv.innerHTML = `<h3>${panel.key} <span class="panel-meta">${fmt(panel.vol)} tokens · ${share}% of total</span></h3>
+      <div class="chart-container"><canvas id="cashPanel${idx}"></canvas></div>`;
+    grid.appendChild(pdiv);
+    // Reindex datasets to union periods (zero-fill missing periods so x-axis aligns)
+    const labels = allPeriods.map(p => formatPeriodChart(p, data.unit));
+    const periods = aggregateCash(panelData[idx].subset).periods;
+    const stagesForPanelChart = pmEligibilityActive()
+      ? CASH_STAGES.filter(s => !CASH_PRE_PM_STAGES.has(s))
+      : CASH_STAGES;
+    const datasets = [...stagesForPanelChart].reverse().map(stage => ({
+      label: stage,
+      data: allPeriods.map(p => {
+        const bucket = periods[p] || {};
+        const total = Object.values(bucket).reduce((a, b) => a + b, 0);
+        const v = bucket[stage] || 0;
+        return total > 0 ? +(100 * v / total).toFixed(2) : 0;
+      }),
+      backgroundColor: CASH_STAGE_COLORS[stage] || '#9ca3af',
+      borderWidth: 0
+    }));
+    const opts = funnelChartOptions(idx === 0); // legend only on first panel
+    const ch = new Chart(document.getElementById('cashPanel' + idx), {
+      type: 'bar',
+      data: { labels, datasets },
+      options: opts,
+      plugins: [dataLabelPlugin]
+    });
+    funnelCharts.push(ch);
+  });
+}
+
+function updateCashTable(filteredRows, splitKey) {
+  const host = document.getElementById('stageBreakdownHost');
+  host.innerHTML = '';
+
+  const splitNote = splitKey
+    ? ` <span style="font-size:11px;color:var(--text-muted);font-weight:400">· split by ${SPLIT_LABELS[splitKey]}</span>`
+    : '';
+  const peNote = pmEligibilityActive()
+    ? ` <span style="font-size:11px;color:var(--text-muted);font-weight:400">· post-credit-check only</span>`
+    : '';
+  const headerCard = document.createElement('div');
+  headerCard.className = 'card';
+  headerCard.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:14px 20px';
+  headerCard.innerHTML = `<h2 style="margin:0">Stage Breakdown <span style="font-size:11px;color:var(--text-muted);font-weight:400">· Partner cohort taxonomy</span>${splitNote}${peNote}</h2>
+    <button class="expand-btn" id="cashExpandAllBtn" title="Expand all stages to show sub-reasons">${allExpanded ? 'Collapse All' : 'Expand All'}</button>`;
+  host.appendChild(headerCard);
+  headerCard.querySelector('#cashExpandAllBtn').addEventListener('click', toggleAllCash);
+
+  if (splitKey) {
+    // One wide multi-panel table matching the main funnel's appendMultiPanelStageCard:
+    // sticky Stage column on the left, each panel's date columns to the right, 2px
+    // vertical divider between panels, horizontal scroll for many panels.
+    const panels = getCashPanelKeys(filteredRows, splitKey);
+    if (!panels.length) {
+      const empty = document.createElement('div');
+      empty.className = 'card';
+      empty.innerHTML = '<p style="color:var(--text-muted);font-size:13px;margin:0">No data for this split.</p>';
+      host.appendChild(empty);
+      return;
+    }
+    const panelDatas = panels.map(panel => {
+      const subset = filteredRows.filter(r => (r[splitKey] || '(unknown)') === panel.key);
+      return { panel, data: aggregateCash(subset) };
+    });
+    appendCashMultiPanelStageCard(host, panelDatas);
+    return;
+  }
+
+  // No split — single aggregate table
+  const card = document.createElement('div');
+  card.className = 'card table-card';
+  card.innerHTML = '<table><thead class="cash-stage-head"></thead><tbody class="cash-stage-table"></tbody></table>';
+  host.appendChild(card);
+
+  const data = aggregateCash(filteredRows);
+  renderCashStageRows(card.querySelector('.cash-stage-head'), card.querySelector('.cash-stage-table'), data, 'cash_');
+  return;
+}
+
+// Pulled out so it can be reused for split-panel rendering.
+function renderCashStageRows(thead, tbody, data, idPrefix) {
+  const { periods, sortedPeriods, unit, subPeriods, subsByStage } = data;
+
+  // Header row
+  const headerTr = document.createElement('tr');
+  headerTr.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:1">Stage</th>'
+    + sortedPeriods.map(p => `<th style="text-align:right;white-space:nowrap">${formatPeriodHtml(p, unit)}</th>`).join('');
+  thead.appendChild(headerTr);
+
+  // Top row: Total Initiated
+  const topTr = document.createElement('tr');
+  topTr.style.fontWeight = '600';
+  topTr.innerHTML = '<td style="position:sticky;left:0;background:var(--card);z-index:1">Total Initiated</td>'
+    + sortedPeriods.map(p => {
+      const periodTotal = Object.values(periods[p] || {}).reduce((a, b) => a + b, 0);
+      return `<td class="num">${fmt(periodTotal)}</td>`;
+    }).join('');
+  tbody.appendChild(topTr);
+
+  // Stage rows with expandable sub-reason children
+  const cashStagesForView = pmEligibilityActive()
+    ? CASH_STAGES.filter(s => !CASH_PRE_PM_STAGES.has(s))
+    : CASH_STAGES;
+  cashStagesForView.forEach(stage => {
+    const isCompleted = stage === '15. Completed';
+    const hasSubs = subsByStage && subsByStage[stage] && subsByStage[stage].size > 0;
+    const stageId = idPrefix + stage.replace(/[^a-zA-Z0-9]/g, '_');
+    const tr = document.createElement('tr');
+    if (hasSubs) tr.classList.add('stage-row');
+    if (isCompleted) {
+      tr.style.fontWeight = '700';
+      tr.style.fontSize = '15px';
+      tr.style.borderTop = '2px solid var(--border)';
+      tr.style.background = 'var(--accent-light)';
+    }
+    const toggleHtml = hasSubs ? `<span class="expand-toggle${allExpanded ? ' open' : ''}" data-stage="${stageId}">▶</span>` : '<span style="display:inline-block;width:16px"></span>';
+    const dotBg = CASH_STAGE_COLORS[stage] || '#999';
+    const stageBg = isCompleted ? 'var(--accent-light)' : 'var(--card)';
+    const stageTd = `<td style="position:sticky;left:0;background:${stageBg};z-index:1">${toggleHtml}<span class="stage-dot" style="background:${dotBg}"></span>${stage}</td>`;
+
+    const cells = sortedPeriods.map((p, i) => {
+      const periodTotal = Object.values(periods[p] || {}).reduce((a, b) => a + b, 0);
+      const vol = (periods[p] || {})[stage] || 0;
+      const pctVal = periodTotal > 0 ? (100 * vol / periodTotal) : 0;
+      let prevPct = null;
+      if (i > 0) {
+        const pp = sortedPeriods[i - 1];
+        const prevTotal = Object.values(periods[pp] || {}).reduce((a, b) => a + b, 0);
+        const prevVol = (periods[pp] || {})[stage] || 0;
+        prevPct = prevTotal > 0 ? (100 * prevVol / prevTotal) : null;
+      }
+      if (isCompleted) {
+        return `<td class="num" style="background:${heatColor(pctVal, true)};color:var(--accent)">${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(vol)}</span></td>`;
+      }
+      return `<td class="num" style="background:${heatColor(pctVal, false)}">-${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(vol)}</span></td>`;
+    }).join('');
+
+    tr.innerHTML = stageTd + cells;
+    if (hasSubs) {
+      tr.addEventListener('click', () => toggleStage(stageId));
+    }
+    tbody.appendChild(tr);
+
+    // Sub-reason rows — sorted by total volume across all periods, desc
+    if (hasSubs) {
+      const subs = [...subsByStage[stage]].map(sr => {
+        const total = sortedPeriods.reduce((s, p) => s + ((subPeriods[p] || {})[stage + '||' + sr] || 0), 0);
+        return { sr, total };
+      }).sort((a, b) => b.total - a.total);
+
+      subs.forEach(({ sr }) => {
+        const subTr = document.createElement('tr');
+        subTr.classList.add('sub-row', 'sub-' + stageId);
+        if (allExpanded) subTr.classList.add('visible');
+        const subCells = sortedPeriods.map((p, i) => {
+          const val = (subPeriods[p] || {})[stage + '||' + sr] || 0;
+          const periodTotal = Object.values(periods[p] || {}).reduce((a, b) => a + b, 0);
+          const pctV = periodTotal > 0 ? (100 * val / periodTotal) : 0;
+          let prevPct = null;
+          if (i > 0) {
+            const pp = sortedPeriods[i - 1];
+            const prevTotal = Object.values(periods[pp] || {}).reduce((a, b) => a + b, 0);
+            const prevVal = (subPeriods[pp] || {})[stage + '||' + sr] || 0;
+            prevPct = prevTotal > 0 ? (100 * prevVal / prevTotal) : null;
+          }
+          if (isCompleted) {
+            return `<td class="num" style="background:var(--accent-light)">${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(val)}</span></td>`;
+          }
+          return `<td class="num" style="background:${heatColor(pctV, false)}">-${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(val)}</span></td>`;
+        }).join('');
+        subTr.innerHTML = `<td style="position:sticky;left:0;background:var(--card);z-index:1;padding-left:36px;color:var(--text-muted);font-size:12px">${subReasonLabel(stage, sr)}</td>` + subCells;
+        tbody.appendChild(subTr);
+      });
+    }
+  });
+}
+
+// One wide multi-panel stage breakdown table for Cash (matches main funnel
+// appendMultiPanelStageCard). Sticky Stage column, panels separated by
+// 2px vertical divider, sub-reasons collapsible.
+function appendCashMultiPanelStageCard(host, panelDatas) {
+  const allPeriods = new Set();
+  let unit = 'month';
+  panelDatas.forEach(({ data }) => {
+    unit = data.unit;
+    data.sortedPeriods.forEach(p => allPeriods.add(p));
+  });
+  const sortedPeriods = [...allPeriods].sort();
+  const totalsFor = (data, p) => Object.values(data.periods[p] || {}).reduce((a, b) => a + b, 0);
+
+  const card = document.createElement('div');
+  card.className = 'card table-card';
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+  tbody.classList.add('cash-stage-table');
+
+  // Row 1: panel-name header spanning each panel's periods
+  const grandTotal = panelDatas.reduce((sum, { panel }) => sum + panel.vol, 0);
+  const r1 = document.createElement('tr');
+  r1.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:3;border-bottom:0"></th>'
+    + panelDatas.map(({ panel }, pIdx) => {
+        const share = grandTotal > 0 ? (100 * panel.vol / grandTotal).toFixed(1) : '0.0';
+        return `<th colspan="${sortedPeriods.length}" style="text-align:center;padding:8px 10px;border-bottom:1px solid var(--border);background:#fafafa;font-size:12px;font-weight:600;${pIdx > 0 ? 'border-left:2px solid var(--border);' : ''}">${panel.key} <span style="font-size:11px;color:var(--text-muted);font-weight:400">· ${fmt(panel.vol)} sessions · ${share}%</span></th>`;
+      }).join('');
+  thead.appendChild(r1);
+
+  // Row 2: "Stage" + repeated date columns per panel
+  const r2 = document.createElement('tr');
+  r2.innerHTML = '<th style="position:sticky;left:0;background:var(--card);z-index:3">Stage</th>'
+    + panelDatas.map((_, pIdx) =>
+        sortedPeriods.map((p, i) =>
+          `<th style="text-align:right;white-space:nowrap;${i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : ''}">${formatPeriodHtml(p, unit)}</th>`
+        ).join('')
+      ).join('');
+  thead.appendChild(r2);
+
+  // Total Initiated row
+  const topTr = document.createElement('tr');
+  topTr.style.fontWeight = '600';
+  let topHtml = '<td style="position:sticky;left:0;background:var(--card);z-index:2">Total Initiated</td>';
+  panelDatas.forEach(({ data }, pIdx) => {
+    sortedPeriods.forEach((p, i) => {
+      const periodTotal = totalsFor(data, p);
+      const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+      topHtml += `<td class="num" style="${leftBorder}">${fmt(periodTotal)}</td>`;
+    });
+  });
+  topTr.innerHTML = topHtml;
+  tbody.appendChild(topTr);
+
+  // Stage rows
+  const cashStagesForViewMulti = pmEligibilityActive()
+    ? CASH_STAGES.filter(s => !CASH_PRE_PM_STAGES.has(s))
+    : CASH_STAGES;
+  cashStagesForViewMulti.forEach(stage => {
+    const isCompleted = stage === '15. Completed';
+    const hasSubs = panelDatas.some(({ data }) => data.subsByStage && data.subsByStage[stage] && data.subsByStage[stage].size > 0);
+    const stageId = 'cash_' + stage.replace(/[^a-zA-Z0-9]/g, '_');
+    const tr = document.createElement('tr');
+    if (hasSubs) tr.classList.add('stage-row');
+    if (isCompleted) {
+      tr.style.fontWeight = '700';
+      tr.style.fontSize = '15px';
+      tr.style.borderTop = '2px solid var(--border)';
+      tr.style.background = 'var(--accent-light)';
+    }
+    const toggleHtml = hasSubs ? `<span class="expand-toggle${allExpanded ? ' open' : ''}" data-stage="${stageId}">▶</span>` : '<span style="display:inline-block;width:16px"></span>';
+    const stageBg = isCompleted ? 'var(--accent-light)' : 'var(--card)';
+    const stageTd = `<td style="position:sticky;left:0;background:${stageBg};z-index:2">${toggleHtml}<span class="stage-dot" style="background:${CASH_STAGE_COLORS[stage] || '#999'}"></span>${stage}</td>`;
+
+    let cellsHtml = '';
+    panelDatas.forEach(({ data }, pIdx) => {
+      sortedPeriods.forEach((p, i) => {
+        const periodTotal = totalsFor(data, p);
+        const vol = data.periods[p]?.[stage] || 0;
+        const pctVal = periodTotal > 0 ? (100 * vol / periodTotal) : 0;
+        let prevPct = null;
+        if (i > 0) {
+          const pp = sortedPeriods[i - 1];
+          const prevTotal = totalsFor(data, pp);
+          const prevVol = data.periods[pp]?.[stage] || 0;
+          prevPct = prevTotal > 0 ? (100 * prevVol / prevTotal) : null;
+        }
+        const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+        if (isCompleted) {
+          cellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(pctVal, true)};color:var(--accent)">${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(vol)}</span></td>`;
+        } else {
+          cellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(pctVal, false)}">-${pctVal.toFixed(2)}%${trendArrow(pctVal, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(vol)}</span></td>`;
+        }
+      });
+    });
+    tr.innerHTML = stageTd + cellsHtml;
+    if (hasSubs) tr.addEventListener('click', () => toggleStage(stageId));
+    tbody.appendChild(tr);
+
+    // Sub-rows: union of sub-reasons across panels, ordered by combined volume desc
+    if (hasSubs) {
+      const allSubs = new Set();
+      panelDatas.forEach(({ data }) => {
+        if (data.subsByStage && data.subsByStage[stage]) data.subsByStage[stage].forEach(s => allSubs.add(s));
+      });
+      const subOrdered = [...allSubs].map(sr => {
+        let total = 0;
+        panelDatas.forEach(({ data }) => {
+          sortedPeriods.forEach(p => { total += (data.subPeriods && data.subPeriods[p] && data.subPeriods[p][stage + '||' + sr]) || 0; });
+        });
+        return { sr, total };
+      }).sort((a, b) => b.total - a.total);
+
+      subOrdered.forEach(({ sr }) => {
+        const subTr = document.createElement('tr');
+        subTr.classList.add('sub-row', 'sub-' + stageId);
+        if (allExpanded) subTr.classList.add('visible');
+        let subCellsHtml = '';
+        panelDatas.forEach(({ data }, pIdx) => {
+          sortedPeriods.forEach((p, i) => {
+            const val = (data.subPeriods && data.subPeriods[p] && data.subPeriods[p][stage + '||' + sr]) || 0;
+            const periodTotal = totalsFor(data, p);
+            const pctV = periodTotal > 0 ? (100 * val / periodTotal) : 0;
+            let prevPct = null;
+            if (i > 0) {
+              const pp = sortedPeriods[i - 1];
+              const prevTotal = totalsFor(data, pp);
+              const prevVal = (data.subPeriods && data.subPeriods[pp] && data.subPeriods[pp][stage + '||' + sr]) || 0;
+              prevPct = prevTotal > 0 ? (100 * prevVal / prevTotal) : null;
+            }
+            const leftBorder = i === 0 && pIdx > 0 ? 'border-left:2px solid var(--border);' : '';
+            if (isCompleted) {
+              subCellsHtml += `<td class="num" style="${leftBorder}background:var(--accent-light)">${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, true)}<br><span style="font-size:10px;color:var(--text-muted)">${fmt(val)}</span></td>`;
+            } else {
+              subCellsHtml += `<td class="num" style="${leftBorder}background:${heatColor(pctV, false)}">-${pctV.toFixed(2)}%${trendArrow(pctV, prevPct, false)}<br><span style="font-size:10px;color:var(--text-muted)">-${fmt(val)}</span></td>`;
+            }
+          });
+        });
+        subTr.innerHTML = `<td style="position:sticky;left:0;background:var(--card);z-index:2;padding-left:36px;color:var(--text-muted);font-size:12px">${subReasonLabel(stage, sr)}</td>` + subCellsHtml;
+        tbody.appendChild(subTr);
+      });
+    }
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  card.appendChild(table);
+  host.appendChild(card);
+}
+
+function toggleAllCash() {
+  allExpanded = !allExpanded;
+  document.querySelectorAll('.cash-stage-table .sub-row').forEach(r => r.classList.toggle('visible', allExpanded));
+  document.querySelectorAll('.cash-stage-table .expand-toggle').forEach(t => t.classList.toggle('open', allExpanded));
+  const btn = document.getElementById('cashExpandAllBtn');
+  if (btn) btn.textContent = allExpanded ? 'Collapse All' : 'Expand All';
+}
+
+function setLoadStep(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('active','done');
+  if (state) el.classList.add(state);
+}
+
+// Lazy per-stage sub-reasons loader. Each canonical funnel stage has its own
+// subreasons-recent-XX.json file. We fetch the one the user clicks into,
+// concatenate the rows into the shared subReasonData array, and re-render.
+// "Expand All" fans out to all unloaded stages in parallel (limited by the
+// browser's per-host connection cap, usually 6).
+const loadedStages = new Set();
+const stageLoadingPromises = {};
+function isAnyStageLoading() {
+  return Object.keys(stageLoadingPromises).length > 0;
+}
+function stageIsLoading(stage) {
+  return !!(stage && stageLoadingPromises[stage]);
+}
+// Toggle-slot markup for a stage row: spinner while this stage's file is loading,
+// ▶ caret when it has sub-reasons, blank spacer otherwise.
+function stageToggleMarkup(stageId, stage, hasSubs) {
+  if (!hasSubs) return '<span style="display:inline-block;width:16px"></span>';
+  if (stageIsLoading(stage)) return '<span class="row-spinner" title="Loading sub-reasons…"></span>';
+  return `<span class="expand-toggle${allExpanded ? ' open' : ''}" data-stage="${stageId}">▶</span>`;
+}
+// Transient "Loading sub-reasons…" row inserted under a stage while its fetch runs.
+function appendStageLoadingRow(tbody, colspan) {
+  const tr = document.createElement('tr');
+  tr.className = 'subreason-loading';
+  tr.innerHTML = `<td colspan="${colspan}"><span class="row-spinner"></span> Loading sub-reasons…</td>`;
+  tbody.appendChild(tr);
+}
+function stageCode(stage) {
+  return stage.split('.')[0].trim();
+}
+async function loadStageSubReasons(stage, opts = {}) {
+  if (loadedStages.has(stage)) return;
+  if (stageLoadingPromises[stage]) return stageLoadingPromises[stage];
+  const promise = (async () => {
+    try {
+      const resp = await fetch(`subreasons-recent-${stageCode(stage)}.json?v=${Date.now()}`);
+      const rows = await resp.json();
+      subReasonData = (subReasonData || []).concat(rows);
+      loadedStages.add(stage);
+    } catch (e) {
+      console.warn('Failed to load sub-reasons for', stage, e);
+    } finally {
+      delete stageLoadingPromises[stage];
+    }
+  })();
+  stageLoadingPromises[stage] = promise;
+  // Render now — the loading flag is set, so the row spinner + "Loading…" row show
+  // during the fetch. Render again when the data lands.
+  if (opts.render !== false && typeof render === 'function') render();
+  await promise;
+  if (opts.render !== false && typeof render === 'function') render();
+}
+
+async function init() {
+  const v = Date.now();
+  setLoadStep('loadStepData','active');
+  const resp = await fetch('data-recent.json?v=' + v);
+  rawData = await resp.json();
+  setLoadStep('loadStepData','done');
+  // subReasonData stays null — populated lazily via loadStageSubReasons(stage)
+  // when the user clicks a stage row or Expand All.
+  try {
+    const defsResp = await fetch('subreason-definitions.json?v=' + v);
+    if (defsResp.ok) subReasonDefinitions = await defsResp.json();
+  } catch (e) {
+    subReasonDefinitions = { definitions: {}, updatedAt: null };
+  }
+
+  // Set date range — default view starts 2026-01-01, full data back to 2025-01-01 loaded on demand
+  const dates = [...new Set(rawData.map(r => r.d))].sort();
+  const maxDate = dates[dates.length - 1];
+  document.getElementById('dateStart').min = '2025-01-01';
+  document.getElementById('dateEnd').min = '2025-01-01';
+  document.getElementById('dateStart').value = '2026-01-01';
+  document.getElementById('dateEnd').value = maxDate;
+  document.getElementById('data-range').textContent = 'Data available: 2026-02-02 to ' + maxDate;
+
+  // Load refresh metadata
+  try {
+    const metaResp = await fetch('meta.json?v=' + v);
+    const meta = await metaResp.json();
+    document.getElementById('lastRefreshed').textContent = meta.refreshedAt + ' · ' + meta.rows.toLocaleString() + ' rows · data through ' + meta.maxDate;
+  } catch (e) {
+    document.getElementById('lastRefreshed').textContent = 'unknown';
+  }
+
+  // Bind controls
+  ['timeUnit','dateStart','dateEnd','filterMerchantCountry','filterCountry','filterNetwork','filterCheckoutMode','filterCheckoutType','filterCohort','filterNewExisting','filterNewConsumer4way','filterWindowType','filterSourceApp','filterPmEligibility','filterCashNVE','filterCashRedirect'].forEach(id => {
+    document.getElementById(id).addEventListener('change', render);
+  });
+
+  // Split-by pill toggles
+  document.querySelectorAll('.split-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSplitBy = btn.dataset.val;
+      document.querySelectorAll('.split-pill').forEach(b => b.classList.toggle('active', b === btn));
+      render();
+    });
+  });
+
+  document.getElementById('definitionCloseBtn').addEventListener('click', closeDefinitionDrawer);
+  document.getElementById('definitionBackdrop').addEventListener('click', closeDefinitionDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDefinitionDrawer(); });
+  document.addEventListener('click', e => {
+    const infoBtn = e.target.closest('.subreason-info-btn[data-stage]');
+    if (infoBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      openDefinitionDetail(infoBtn.dataset.stage, infoBtn.dataset.subreason);
+      return;
+    }
+    const item = e.target.closest('.definition-item[data-stage]');
+    if (item) {
+      e.preventDefault();
+      renderDefinitionDetail(getSubReasonDefinition(item.dataset.stage, item.dataset.subreason));
+      return;
+    }
+    const glossaryLink = e.target.closest('[data-definition-action="glossary"]');
+    if (glossaryLink) {
+      e.preventDefault();
+      openGlossary();
+    }
+  });
+
+  // cash-data.json is lazy-loaded by render() the first time cohort=Cash is selected.
+  setLoadStep('loadStepRender','active');
+  await render();
+  setLoadStep('loadStepRender','done');
+  // Brief pause so users see the final "done" state, then fade overlay out.
+  setTimeout(() => {
+    const ov = document.getElementById('loadingOverlay');
+    if (!ov) return;
+    ov.style.transition = 'opacity 0.25s';
+    ov.style.opacity = '0';
+    setTimeout(() => { ov.hidden = true; }, 250);
+  }, 200);
+}
+
+init();
 </script>
 </body>
 </html>
