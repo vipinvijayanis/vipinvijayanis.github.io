@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Conversion Funnel — DEMO (dummy data)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafafa; --card: #fff; --border: #e5e7eb; --text: #1f2937;
+    --text-muted: #6b7280; --accent: #10b981; --accent-light: #d1fae5;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-mono); background: var(--bg); color: var(--text); padding: 24px; max-width: 1400px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+  .period-partial { display: block; font-weight: 400; font-size: 10px; color: var(--text-muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: flex-end; }
+  .control-group { display: flex; flex-direction: column; gap: 4px; }
+  .control-group[hidden] { display: none; }
+  .control-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+  select, input[type="date"] { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--text); cursor: pointer; }
+  select:focus, input:focus { outline: none; border-color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+  .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .chart-container { position: relative; height: 350px; }
+  .funnel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+  .funnel-panel { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px 4px; }
+  .funnel-panel h3 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: 0.2px; }
+  .funnel-panel h3 .panel-meta { font-size: 10px; font-weight: 400; color: var(--text-muted); margin-left: 6px; }
+  .funnel-panel .chart-container { height: 280px; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.96); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-family: var(--font-mono); }
+  .loading-overlay[hidden] { display: none; }
+  .loading-overlay .loading-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
+  .loading-overlay .loading-bar { width: 320px; height: 3px; background: #f3f4f6; border-radius: 2px; overflow: hidden; }
+  .loading-overlay .loading-bar > div { height: 100%; width: 30%; background: var(--text); border-radius: 2px; animation: slideBar 1.4s ease-in-out infinite; }
+  @keyframes slideBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(420%); } }
+  .footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+</style>
+  <link rel="icon" href="data:,">
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-title">Loading Checkout Funnel Demo</div>
+  <div class="loading-bar"><div></div></div>
+  <div style="font-size: 12px; color: var(--text-muted); text-align: center; max-width: 480px;">
+    <p>Loading synthetic demo data. All figures are illustrative — no real customer or company metrics.</p>
+  </div>
+</div>
+
+<div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:8px;padding:14px 18px;margin:0 0 18px;font-size:14px;line-height:1.55"><b>⚠️ DEMO — for representational purposes only.</b> Every figure on this dashboard is <b>synthetic dummy data</b> generated for illustration. Numbers do not reflect actual conversion rates, volumes, or any real customer, merchant, or company data.</div>
+
+<h1>Checkout Conversion Funnel — Demo</h1>
+<div class="subtitle">Illustrative checkout funnel — synthetic demo data</div>
+
+<div class="card">
+  <h2>Welcome</h2>
+  <p>This is a demo dashboard showcasing a checkout conversion funnel with interactive charts and filtering capabilities.</p>
+  <p style="margin-top: 12px; color: var(--text-muted); font-size: 13px;">
+    The dashboard has been split into smaller components for faster loading on GitHub Pages. 
+    All data shown is synthetic and created for demonstration purposes only.
+  </p>
+</div>
+
+<div class="card">
+  <h2>Demo Pages Available</h2>
+  <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.8;">
+    <li><a href="promo-codes-checkout-demo.html" style="color: #10b981; text-decoration: none; font-weight: 600;">Promo Codes Case Study</a> — Product case study about designing and building promo-code redemption inside Afterpay checkout</li>
+    <li><strong>Checkout Funnel</strong> — This page (currently loading)</li>
+  </ul>
+</div>
+
+<div class="footer">
+  Demo Pages Hosted on GitHub Pages · All data is synthetic
+</div>
+
+<script>
+  // Simulate data loading completion
+  setTimeout(() => {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+      overlay.style.transition = 'opacity 0.25s';
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.hidden = true; }, 250);
+    }
+  }, 800);
+</script>
+</body>
+</html>
