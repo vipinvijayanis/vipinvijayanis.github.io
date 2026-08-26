@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <title>Promo codes, now inside Afterpay checkout</title>
+  <meta name="description" content="A product case study about designing and building promo-code redemption inside Afterpay checkout with agent-assisted planning and hands-on implementation.">
+  <meta property="og:title" content="Promo codes, now inside checkout">
+  <meta property="og:description" content="A PM-built checkout feature: less friction, smarter audiences, measurable impact.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Promo codes, now inside checkout">
+  <meta name="twitter:description" content="A PM-built checkout feature: less friction, smarter audiences, measurable impact.">
+  <meta name="twitter:image" content="/og.png">
+  <style>
+    :root {
+      --ink: #11110f;
+      --muted: #66645f;
+      --paper: #f5f0e6;
+      --paper-2: #ebe3d4;
+      --white: #fffdf8;
+      --mint: #b2fce4;
+      --mint-dark: #11795e;
+      --coral: #ff6f4f;
+      --yellow: #ffd75b;
+      --red: #bc2b1c;
+      --line: rgba(17, 17, 15, .16);
+      --shadow: 0 18px 60px rgba(34, 28, 19, .12);
+      --radius-lg: 32px;
+      --radius-md: 20px;
+      --content: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      left: 16px;
+      top: -80px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: white;
+      transition: top .2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 80;
+      height: 4px;
+      background: rgba(17, 17, 15, .08);
+    }
+    .progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--coral);
+      transition: width .1s linear;
+    }
+    .nav-wrap {
+      position: sticky;
+      top: 4px;
+      z-index: 70;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      backdrop-filter: blur(16px);
+    }
+    nav {
+      width: min(calc(100% - 32px), var(--content));
+      min-height: 68px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      letter-spacing: -.03em;
+      text-decoration: none;
+    }
+    .brand-mark {
+      width: 34px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--mint);
+      font-size: 12px;
+    }
+    .nav-links { display: flex; gap: 22px; align-items: center; }
+    .nav-links a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #19a876;
+      box-shadow: 0 0 0 4px rgba(25, 168, 118, .13);
+    }
+
+    main { overflow: clip; }
+    .wrap { width: min(calc(100% - 32px), var(--content)); margin-inline: auto; }
+    .hero {
+      min-height: 760px;
+      padding: 76px 0 92px;
+      background:
+        radial-gradient(circle at 85% 14%, rgba(178, 252, 228, .9), transparent 25%),
+        linear-gradient(180deg, var(--paper), #f8f4ec 70%, var(--paper));
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      max-width: 1020px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 3px; border-radius: 99px; background: var(--coral); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 1000px;
+      margin-bottom: 28px;
+      font-size: clamp(58px, 9vw, 126px);
+      line-height: .91;
+      letter-spacing: -.075em;
+    }
+    h1 em {
+      position: relative;
+      display: inline-block;
+      font-family: Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -.07em;
+    }
+    h1 em::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: -2px;
+      left: 4px;
+      height: 9px;
+      border-radius: 100%;
+      background: var(--coral);
+      transform: rotate(-1.5deg) skew(-20deg);
+      opacity: .92;
+    }
+    .hero-copy {
+      max-width: 850px;
+      margin-bottom: 30px;
+      color: #494741;
+      font-size: clamp(19px, 2vw, 24px);
+      line-height: 1.45;
+    }
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 34px; }
+    .pill {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, .76);
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .primary, .secondary {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      font-weight: 820;
+      text-decoration: none;
+    }
+    .primary { background: var(--ink); color: white; }
+    .primary:hover { background: var(--coral); border-color: var(--coral); }
+    .secondary { background: transparent; }
+    .secondary:hover { background: var(--white); }
+
+    .hero-footer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 72px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-stat { padding: 21px 22px 21px 0; }
+    .hero-stat + .hero-stat { padding-left: 22px; border-left: 1px solid var(--line); }
+    .hero-stat strong { display: block; font-size: clamp(24px, 2.8vw, 38px); letter-spacing: -.05em; line-height: 1.1; }
+    .hero-stat span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+
+    section { padding: 110px 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: .56fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 54px;
+    }
+    .kicker { color: var(--coral); font-size: 12px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+    h2 { margin-bottom: 18px; font-size: clamp(42px, 6vw, 76px); line-height: .98; letter-spacing: -.06em; }
+    .lead { max-width: 750px; color: #57544e; font-size: clamp(18px, 2vw, 23px); line-height: 1.5; }
+
+    .recording { overflow: hidden; background: #e9e2d5; }
+    .recording-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(420px, 1fr);
+      gap: clamp(42px, 7vw, 96px);
+      align-items: center;
+    }
+    .real-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .real-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+    .recording-copy h2 { max-width: 680px; }
+    .watch-list { margin: 34px 0 0; padding: 0; list-style: none; counter-reset: watch; }
+    .watch-list li {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 13px;
+      align-items: start;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+      color: #45423d;
+    }
+    .watch-list li::before {
+      counter-increment: watch;
+      content: "0" counter(watch);
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .watch-list strong { display: block; margin-bottom: 3px; color: var(--ink); }
+    .recording-stage {
+      position: relative;
+      display: grid;
+      min-height: 650px;
+      place-items: center;
+      padding: 42px;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      background: var(--ink);
+      box-shadow: var(--shadow);
+    }
+    .recording-stage::before,
+    .recording-stage::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: .9;
+    }
+    .recording-stage::before { width: 250px; height: 250px; top: -88px; right: -70px; background: var(--mint); }
+    .recording-stage::after { width: 180px; height: 180px; bottom: -70px; left: -60px; background: var(--coral); }
+    .recording-phone {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 330px);
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 40px;
+      background: #050505;
+      box-shadow: 0 30px 80px rgba(0,0,0,.42);
+    }
+    .recording-phone video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 414 / 902;
+      border-radius: 30px;
+      background: white;
+    }
+    .recording-caption { margin: 17px 0 0; color: #68645d; font-size: 12px; line-height: 1.6; }
+
+    .problem { background: #f9f5ed; }
+    .journeys { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .journey {
+      padding: clamp(24px, 3vw, 38px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .journey.new { background: var(--mint); }
+    .journey-tag { display: inline-block; padding: 6px 10px; border-radius: 999px; background: var(--ink); color: white; font-size: 11px; font-weight: 900; text-transform: uppercase; }
+    .journey h3 { margin: 22px 0 8px; font-size: 31px; letter-spacing: -.05em; }
+    .journey > p { color: var(--muted); }
+    .steps { margin: 26px 0 0; padding: 0; list-style: none; counter-reset: step; }
+    .steps li {
+      position: relative;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 54px;
+      padding: 9px 0;
+      border-top: 1px solid rgba(17,17,15,.12);
+      counter-increment: step;
+    }
+    .steps li::before {
+      content: counter(step);
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(17,17,15,.25);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .friction { color: var(--red); font-size: 11px; font-weight: 850; text-transform: uppercase; }
+    .evidence { background: #e9e2d5; }
+    .outcomes { display: grid; grid-template-columns: 1.15fr .85fr; gap: 15px; }
+    .outcome {
+      min-height: 220px;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--white);
+    }
+    .outcome.featured { background: var(--mint); }
+    .outcome .metric { margin: 42px 0 4px; font-size: clamp(42px, 5vw, 68px); font-weight: 900; letter-spacing: -.065em; line-height: 1; }
+    .outcome p { margin-bottom: 0; color: var(--muted); }
+    .outcome .meta { font-size: 11px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+    .evidence-guardrail { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 0; margin-top: 15px; padding: 25px 28px; border-radius: 22px; background: var(--ink); color: white; }
+    .evidence-guardrail > strong { align-self: center; max-width: 150px; padding-right: 24px; color: var(--mint); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+    .evidence-check { padding: 2px 22px; border-left: 1px solid rgba(255,255,255,.16); color: #d2cec7; font-size: 13px; }
+    .evidence-check strong { display: block; margin-bottom: 3px; color: white; font-size: 17px; }
+
+    .build-story { background: var(--ink); color: white; }
+    .build-story .lead { color: #c9c5bd; }
+    .builder-intro {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .builder-card, .constraint-card { padding: clamp(28px, 4vw, 46px); border-radius: var(--radius-lg); }
+    .builder-card { border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); }
+    .builder-card h3 { max-width: 760px; margin: 12px 0 14px; font-size: clamp(30px, 4.5vw, 54px); line-height: 1.05; letter-spacing: -.055em; }
+    .builder-card p { max-width: 780px; margin-bottom: 0; color: #c9c5bd; font-size: 18px; }
+    .constraint-card { display: flex; flex-direction: column; justify-content: space-between; background: var(--coral); color: var(--ink); }
+    .constraint-card strong { display: block; font-size: clamp(68px, 9vw, 120px); line-height: .85; letter-spacing: -.08em; }
+    .constraint-card span { max-width: 300px; font-size: 19px; font-weight: 850; line-height: 1.3; }
+    .process-label { margin: 54px 0 18px; color: var(--mint); font-size: 12px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+    .process-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .process-step {
+      min-height: 240px;
+      padding: 26px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 22px;
+      background: rgba(255,255,255,.05);
+    }
+    .process-step:nth-child(2), .process-step:nth-child(5) { background: rgba(178,252,228,.1); }
+    .process-number { color: var(--mint); font-size: 11px; font-weight: 900; letter-spacing: .12em; }
+    .process-step h3 { margin: 44px 0 9px; font-size: 22px; letter-spacing: -.035em; }
+    .process-step p { margin: 0; color: #c9c5bd; font-size: 14px; }
+    .audience-engine {
+      margin-top: 18px;
+      padding: clamp(30px, 5vw, 52px);
+      border-radius: var(--radius-lg);
+      background: var(--yellow);
+      color: var(--ink);
+    }
+    .audience-engine h3 { max-width: 850px; margin: 10px 0 24px; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.05em; }
+    .campaign-reach { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .reach-card { display: flex; min-height: 145px; flex-direction: column; justify-content: space-between; padding: 22px; border-radius: 18px; background: var(--ink); color: white; }
+    .reach-card strong { display: block; font-size: clamp(34px, 4vw, 52px); line-height: 1; letter-spacing: -.055em; }
+    .reach-card span { color: #d7d2c9; font-size: 14px; }
+    .audience-signals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .audience-signal { padding: 22px; border: 1px solid rgba(17,17,15,.2); border-radius: 18px; background: rgba(255,255,255,.45); }
+    .audience-signal strong { display: block; margin-bottom: 5px; font-size: 18px; }
+    .audience-signal span { color: #57503b; font-size: 14px; }
+    .challenge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .challenge-card { padding: 28px; border: 1px solid rgba(255,255,255,.15); border-radius: 22px; background: rgba(255,255,255,.06); }
+    .challenge-card .challenge-tag { color: var(--coral); font-size: 11px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+    .challenge-card h3 { margin: 30px 0 10px; font-size: 25px; letter-spacing: -.04em; }
+    .challenge-card p { margin: 0; color: #c9c5bd; font-size: 14px; }
+    .builder-learning { margin-top: 18px; padding: 26px 30px; border-radius: 20px; background: var(--mint); color: var(--ink); font-size: clamp(18px, 2.3vw, 27px); font-weight: 850; line-height: 1.35; }
+
+    footer { padding: 34px 0 54px; border-top: 1px solid var(--line); background: #f8f4ec; }
+    .footer-row { display: flex; justify-content: space-between; gap: 24px; color: var(--muted); font-size: 12px; }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 960px) {
+      .hero { padding-top: 56px; }
+      .hero-grid, .section-head, .recording-grid, .builder-intro { grid-template-columns: 1fr; }
+      .hero-copy { max-width: 740px; }
+      .hero-footer { grid-template-columns: 1fr 1fr; }
+      .hero-stat:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .hero-stat:nth-child(4) { border-top: 1px solid var(--line); }
+      .outcomes { grid-template-columns: 1fr; }
+      .outcome { min-height: 210px; }
+      .outcome .metric { margin-top: 38px; }
+      .recording-copy { max-width: 760px; }
+      .recording-stage { min-height: 620px; }
+      .process-flow, .audience-signals, .challenge-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .nav-status { font-size: 0; padding: 9px; }
+      section { padding: 78px 0; }
+      .hero { min-height: 0; padding-bottom: 74px; }
+      h1 { font-size: clamp(52px, 16vw, 78px); }
+      .recording-stage { min-height: 0; padding: 32px 24px; }
+      .recording-phone { width: min(100%, 300px); border-radius: 34px; }
+      .recording-phone video { border-radius: 25px; }
+      .hero-footer, .journeys, .process-flow, .campaign-reach, .audience-signals, .challenge-grid { grid-template-columns: 1fr; }
+      .hero-stat, .hero-stat + .hero-stat { padding: 16px 0; border-left: 0; border-top: 1px solid var(--line); }
+      .hero-stat:first-child { border-top: 0; }
+      .evidence-guardrail { grid-template-columns: 1fr; }
+      .evidence-guardrail > strong { max-width: none; padding: 0 0 14px; }
+      .evidence-check { padding: 14px 0; border-top: 1px solid rgba(255,255,255,.16); border-left: 0; }
+      .process-step { min-height: 0; }
+      .process-step h3 { margin-top: 28px; }
+      .footer-row { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to story</a>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <div class="nav-wrap">
+    <nav aria-label="Primary navigation">
+      <a class="brand" href="#top"><span class="brand-mark">AP</span><span>Promo codes × Checkout</span></a>
+      <div class="nav-links">
+        <a href="#recording">Real checkout</a>
+        <a href="#problem">The problem</a>
+        <a href="#evidence">Impact</a>
+        <a href="#delivery">How I built it</a>
+      </div>
+      <div class="nav-status" title="Designed, built, and launched without a dedicated engineering allocation"><span class="status-dot"></span> PM-built &amp; launched</div>
+    </nav>
+  </div>
+
+  <main id="main">
+    <header class="hero" id="top">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Afterpay feature story · 2026</div>
+            <h1>Promo codes,<br><em>right where</em><br>you pay.</h1>
+            <p class="hero-copy">Afterpay lets shoppers split a purchase into four payments. With no engineering capacity allocated, I planned and built promo-code redemption directly inside checkout—making offers easier to use while letting each campaign decide who sees the field.</p>
+            <div class="hero-pills" aria-label="Feature scope">
+              <span class="pill">US first → Australia</span>
+              <span class="pill">Pay in 4</span>
+              <span class="pill">Built by a PM with AI agents</span>
+              <span class="pill">Audience-controlled</span>
+            </div>
+            <div class="hero-actions">
+              <a class="primary" href="#recording">Watch the real checkout ↓</a>
+              <a class="secondary" href="#problem">Start with the problem</a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hero-footer reveal" aria-label="Feature highlights">
+          <div class="hero-stat"><strong>28 May</strong><span>First partner launch switched on at full audience</span></div>
+          <div class="hero-stat"><strong>$20–30M</strong><span>Estimated annual US net iGPV opportunity</span></div>
+          <div class="hero-stat"><strong>$1.78M</strong><span>Incremental purchase volume in the first completed campaign</span></div>
+          <div class="hero-stat"><strong>&lt;30 bps</strong><span>Checkout-conversion loss guardrail</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="recording" id="recording">
+      <div class="wrap">
+        <div class="recording-grid">
+          <div class="recording-copy reveal">
+            <div class="real-badge">Real sandbox checkout · 20 seconds</div>
+            <h2>See the feature work for real.</h2>
+            <p class="lead">This is the actual Afterpay test experience. The recording begins on the order summary so the story stays focused on the promo interaction.</p>
+            <ol class="watch-list" aria-label="What to watch in the recording">
+              <li><div><strong>Open the promo row</strong>The shopper stays inside checkout instead of visiting the Afterpay app.</div></li>
+              <li><div><strong>Apply <code>TEST10</code></strong>The code is validated directly on the order summary.</div></li>
+              <li><div><strong>See the payment math update</strong>The order changes from $100 to $90, and the first payment from $25 to $22.50.</div></li>
+            </ol>
+            <p class="recording-caption">Sandbox recording supplied 14 August 2026. The login portion was removed because it displayed a test account identifier; the original file remains unchanged.</p>
+          </div>
+          <div class="recording-stage reveal">
+            <div class="recording-phone">
+              <video controls playsinline preload="metadata" poster="promo-code-checkout-recording-poster.jpg" aria-label="Sandbox recording of an Afterpay promo code being applied at checkout">
+                <source src="promo-code-checkout-recording.mp4" type="video/mp4">
+                Your browser cannot play this recording. <a href="promo-code-checkout-recording.mp4">Open the MP4 file instead.</a>
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="problem" id="problem">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">01 · The problem</div>
+          <div><h2>A good offer had a bad journey.</h2><p class="lead">Shoppers had to leave checkout, redeem in the Afterpay app, then return. At the same time, broad discounts spent incentive on people who may have purchased anyway.</p></div>
+        </div>
+        <div class="journeys">
+          <article class="journey reveal">
+            <span class="journey-tag">Before</span>
+            <h3>The app detour</h3>
+            <p>Two surfaces and multiple places to abandon.</p>
+            <ol class="steps">
+              <li><span>See promo code on merchant sites</span></li>
+              <li><span>Leave checkout and open the Afterpay app <small class="friction">High friction</small></span></li>
+              <li><span>Find and redeem the promo</span></li>
+              <li><span>Return to the merchant and finish <small class="friction">Context switch</small></span></li>
+            </ol>
+          </article>
+          <article class="journey new reveal">
+            <span class="journey-tag">Now</span>
+            <h3>Redemption in checkout</h3>
+            <p>One surface from code to purchase.</p>
+            <ol class="steps">
+              <li><span>See promo code on merchant sites</span></li>
+              <li><span>Select Afterpay at the merchant</span></li>
+              <li><span>Enter the code in checkout</span></li>
+              <li><span>See the total and payments update</span></li>
+              <li><span>Confirm the purchase</span></li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="evidence" id="evidence">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">02 · Evidence &amp; impact</div>
+          <div><h2>The signal was worth scaling.</h2><p class="lead">The first completed campaign added $1.78M in incremental purchase volume, against a modeled $20–30M annual US opportunity.</p></div>
+        </div>
+        <div class="outcomes">
+          <article class="outcome featured reveal"><div class="meta">First completed campaign</div><div class="metric">$1.78M</div><p>Incremental purchase volume—value created beyond purchases expected to happen anyway.</p></article>
+          <article class="outcome reveal"><div class="meta">Modeled annual US opportunity</div><div class="metric">$20–30M</div><p>Net incremental purchase volume, dependent on protecting checkout conversion.</p></article>
+        </div>
+        <div class="evidence-guardrail reveal">
+          <strong>Scale only when</strong>
+          <div class="evidence-check"><strong>Positive lift</strong>Net incremental volume stays positive.</div>
+          <div class="evidence-check"><strong>&lt;30 bps</strong>Checkout-conversion loss remains below the guardrail.</div>
+          <div class="evidence-check"><strong>Stable experience</strong>No material technical or support issues emerge.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="build-story" id="delivery">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">03 · How I built it</div>
+          <div><h2>There was no engineering team available—so I became the builder.</h2><p class="lead">I was the product manager for the problem, but there was no allocated engineering capacity to implement the solution. Rather than leave the idea on a roadmap, I used AI agents as planning and coding collaborators, with experienced engineers reviewing the approach and the changes.</p></div>
+        </div>
+
+        <div class="builder-intro">
+          <article class="builder-card reveal">
+            <div class="kicker">The decision</div>
+            <h3>Turn a resourcing constraint into a hands-on product build.</h3>
+            <p>The goal was not to work around engineering standards. It was to create a reviewable plan, get the right technical confidence, then deliver the feature in small increments that the owning teams could safely assess.</p>
+          </article>
+          <article class="constraint-card reveal">
+            <strong>0</strong>
+            <span>dedicated engineers allocated to build the feature</span>
+          </article>
+        </div>
+
+        <div class="process-label">The agent-assisted delivery process</div>
+        <div class="process-flow">
+          <article class="process-step reveal"><div class="process-number">STEP 01 · AGENT 1</div><h3>Create the implementation plan</h3><p>I used the first agent to translate the product idea into an end-to-end technical plan: surfaces, dependencies, risks, testing, and delivery sequence.</p></article>
+          <article class="process-step reveal"><div class="process-number">STEP 02 · AGENT 2</div><h3>Independently challenge it</h3><p>A second agent reviewed the plan with fresh context, looking for missing cases, unsafe assumptions, and places where the design could be simpler.</p></article>
+          <article class="process-step reveal"><div class="process-number">STEP 03 · HUMAN REVIEW</div><h3>Get engineers comfortable</h3><p>I asked engineers familiar with checkout to review the direction before implementation, so the approach matched the system and its operating standards.</p></article>
+          <article class="process-step reveal"><div class="process-number">STEP 04 · DELIVERY DESIGN</div><h3>Split the work into small increments</h3><p>We agreed how to separate the foundation, interface, integration, analytics, and hardening so each change stayed understandable and reviewable.</p></article>
+          <article class="process-step reveal"><div class="process-number">STEP 05 · BUILD</div><h3>Implement one increment at a time</h3><p>I worked through the sequence with the agents, tested each piece, incorporated review feedback, and only then moved to the next increment.</p></article>
+          <article class="process-step reveal"><div class="process-number">STEP 06 · REFINE</div><h3>Test, observe, and iterate</h3><p>The final experience came from repeated cycles across behavior, edge cases, visual fidelity, and campaign targeting—not from a single generated solution.</p></article>
+        </div>
+
+        <article class="audience-engine reveal">
+          <div class="kicker" style="color:#514000;">How the feature evolved</div>
+          <h3>What started as a promo field became a configurable audience system.</h3>
+          <div class="campaign-reach" aria-label="Campaign reach">
+            <div class="reach-card"><strong>4 campaigns</strong><span>Promo campaigns in the United States</span></div>
+            <div class="reach-card"><strong>Afterpay Day</strong><span>Flagship promo campaigns in Australia</span></div>
+          </div>
+          <div class="audience-signals">
+            <div class="audience-signal"><strong>Merchant</strong><span>Only show the field for merchants participating in a campaign.</span></div>
+            <div class="audience-signal"><strong>Order history</strong><span>Target new customers, existing customers, or both.</span></div>
+            <div class="audience-signal"><strong>US customer profile</strong><span>Target an Afterpay profile, a Cash App-linked profile, or both.</span></div>
+          </div>
+        </article>
+
+        <div class="process-label">The three hardest parts</div>
+        <div class="challenge-grid">
+          <article class="challenge-card reveal"><div class="challenge-tag">Biggest learning curve</div><h3>Local testing</h3><p>Testing checkout locally was new to me. I had to learn the existing test harness—and where needed shape the right mocks—to reproduce the combinations where the promo field should appear, stay hidden, succeed, or fail.</p></article>
+          <article class="challenge-card reveal"><div class="challenge-tag">Biggest planning miss</div><h3>Review time</h3><p>I underestimated the calendar time required for the owning teams to review each change and merge it safely. Writing the change was only part of the delivery timeline; review availability was a real dependency.</p></article>
+          <article class="challenge-card reveal"><div class="challenge-tag">Biggest agent misconception</div><h3>Pixel-perfect design</h3><p>Giving an agent the design did not produce a faithful interface automatically. Reaching the intended quality took countless visual comparisons, precise feedback, and small iterations across spacing, type, states, and motion.</p></article>
+        </div>
+        <div class="builder-learning reveal">The lesson: agents accelerated planning and implementation, but they did not replace product judgement, technical review, testing discipline, or the patience required for craft.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row"><span>Promo Codes × Checkout · Product case study</span><span>Agent-assisted planning · Engineer-reviewed · Built hands-on</span></div>
+  </footer>
+
+  <script>
+    (() => {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduced && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+          if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+        }), { threshold: .12 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      } else {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      }
+
+      const progressBar = document.getElementById('progressBar');
+      const updateProgress = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const value = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progressBar.style.width = `${Math.min(100, Math.max(0, value))}%`;
+      };
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>
