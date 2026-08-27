@@ -84,8 +84,9 @@ letter-spacing: -0.05em to -0.07em;
 
 ### Header
 
-- Omit a repeated name or wordmark and right-align only the essential links—Work, Résumé and Contact.
-- Use the same height, typography and border treatment across pages.
+- Short landing pages may omit a standalone header when their sections and calls to action are already visible.
+- In that case, place at most two lightweight utility links—such as Résumé and LinkedIn—at the top-right of the hero.
+- Longer project pages may retain a compact navigation header when it materially improves orientation.
 - Project pages should use relative links so they work locally and on GitHub Pages.
 
 ### Hero
@@ -94,12 +95,15 @@ letter-spacing: -0.05em to -0.07em;
 - Use one strong headline.
 - Supporting copy should normally be one or two concise sentences.
 - Keep role, focus areas and supporting profile copy together in one left-aligned hierarchy.
-- A portrait may anchor the opposite side when it is monochrome, restrained and secondary to the headline. Align its lower edge with the final supporting line and fade it into the background rather than placing it inside a visible frame.
+- On the root page, use the hero to establish long-term product-launch expertise. Introduce hands-on AI work with the project section rather than repeating it in the hero.
+- A portrait may anchor the opposite side when it is monochrome, restrained and secondary to the headline. Align its top edge with the headline and fade it into the background rather than placing it inside a visible frame.
 - Avoid pill collections, multiple hero buttons and repeated project metadata.
 - One accent-coloured word or phrase is enough.
 
 ### Company proof
 
+- On a short landing page, integrate company logos into the hero rather than creating another labelled section.
+- Let the logos float without table borders, panels or a redundant subheader.
 - Show company logos prominently and give them equal visual weight.
 - Use official assets with sufficient contrast.
 - Do not imply endorsement, partnership or sponsorship. The context is employment history.
@@ -107,6 +111,7 @@ letter-spacing: -0.05em to -0.07em;
 ### Project tiles
 
 - Each tile contains the project title only unless an extra line is essential to distinguish two similar projects.
+- A compact factual status—such as a live internal tool or a live customer feature—may sit above the title when it materially strengthens the evidence. Keep it quiet and specific.
 - The complete tile is clickable.
 - A tile may use one topic-specific image when it makes the work easier to understand at a glance.
 - Keep imagery secondary to typography: use a strong black overlay, preserve clear title contrast and avoid generic stock photography.
@@ -124,9 +129,11 @@ letter-spacing: -0.05em to -0.07em;
 ### Contact and footer
 
 - Use email as the primary contact action.
-- Résumé and LinkedIn are secondary actions.
-- Centre the closing statement and its compact action group as one composition.
-- Keep the footer compact.
+- Résumé and LinkedIn are secondary utility actions and may sit together at the top-right of the hero.
+- Centre the closing statement and one primary contact action as a compact composition.
+- Frame the root-page closing as a hiring conversation, not a freelance-services pitch.
+- Keep the footer compact and centre the copyright line.
+- Do not repeat an email link in the footer when the primary contact action already opens email.
 - Do not repeat the full navigation or biography in the footer.
 
 ## 4. Writing rules
