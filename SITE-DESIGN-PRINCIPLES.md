@@ -75,6 +75,7 @@ letter-spacing: -0.05em to -0.07em;
 
 - Maximum content width: `1240px`.
 - Desktop page gutter: `24px` on each side; mobile gutter: `14px`.
+- Align section dividers with the content gutter instead of running them edge to edge across the viewport.
 - Use generous vertical spacing and thin dividers to separate ideas.
 - Prefer one- or two-column layouts. Avoid dense dashboards on narrative pages.
 - Cards should be flat: one-pixel border, no rounded corners, no ornamental shadow.
