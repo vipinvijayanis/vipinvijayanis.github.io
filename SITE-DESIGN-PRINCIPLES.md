@@ -109,6 +109,11 @@ letter-spacing: -0.05em to -0.07em;
 - Use official assets with sufficient contrast.
 - Do not imply endorsement, partnership or sponsorship. The context is employment history.
 
+### Résumé
+
+- Keep the HTML résumé readable in the browser and provide one unobtrusive direct-download action for the repository-hosted PDF.
+- Keep the PDF aligned with the visible HTML résumé whenever the résumé content changes.
+
 ### Project tiles
 
 - Each tile contains the project title only unless an extra line is essential to distinguish two similar projects.
@@ -171,7 +176,8 @@ letter-spacing: -0.05em to -0.07em;
 ├── assets/
 │   └── logos/
 ├── resume/
-│   └── index.html
+│   ├── index.html
+│   └── Vipin-Vijayan-Resume.pdf
 ├── checkout-funnel-demo/
 │   ├── index.html
 │   └── data/

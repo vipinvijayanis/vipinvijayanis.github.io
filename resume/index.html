@@ -364,6 +364,41 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
       window.Babel.transformScriptTags();
     }
+
+    const downloadStyle = document.createElement('style');
+    downloadStyle.textContent = `
+      #resume-download {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 100000;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 14px;
+        color: #fff;
+        background: #1d3244;
+        border: 1px solid rgba(255, 255, 255, .28);
+        font: 700 13px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+      }
+      #resume-download:hover { background: #29465f; }
+      #resume-download:focus-visible { outline: 3px solid #8fb0cc; outline-offset: 3px; }
+      @media (max-width: 980px) {
+        #resume-download { top: auto; right: 14px; bottom: 14px; }
+      }
+    `;
+    document.head.appendChild(downloadStyle);
+
+    const downloadLink = document.createElement('a');
+    downloadLink.id = 'resume-download';
+    downloadLink.href = 'Vipin-Vijayan-Resume.pdf';
+    downloadLink.download = 'Vipin-Vijayan-Resume.pdf';
+    downloadLink.textContent = 'Download PDF ↓';
+    downloadLink.setAttribute('aria-label', 'Download Vipin Vijayan résumé as a PDF');
+    document.body.appendChild(downloadLink);
   } catch (err) {
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);
