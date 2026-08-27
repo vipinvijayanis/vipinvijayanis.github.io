@@ -3,11 +3,184 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Checkout Funnel Demo</title>
-  <meta http-equiv="refresh" content="0; url=checkout-funnel-demo/">
+  <meta name="description" content="Vipin Vijayan is a product lead and hands-on builder creating fintech products, data tools and customer experiences.">
+  <meta name="theme-color" content="#080808">
+  <title>Vipin Vijayan — Product Lead &amp; Builder</title>
+  <style>
+    :root {
+      --black: #080808;
+      --panel: #111111;
+      --white: #f5f5f0;
+      --muted: #999994;
+      --line: #292929;
+      --accent: #ff6b5f;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--white);
+      background: var(--black);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+    .shell { width: min(calc(100% - 48px), var(--max)); margin-inline: auto; }
+
+    header { border-bottom: 1px solid var(--line); }
+    nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .name { font-size: 14px; font-weight: 800; letter-spacing: -.01em; text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: var(--muted); font-size: 13px; font-weight: 700; text-decoration: none; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links .contact-link { color: var(--white); }
+
+    .hero { min-height: 690px; display: flex; align-items: center; padding: 105px 0 90px; }
+    .hero-inner { width: 100%; }
+    .eyebrow { margin: 0 0 28px; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 1050px; margin: 0; font-size: clamp(62px, 10.4vw, 148px); font-weight: 700; line-height: .88; letter-spacing: -.075em; }
+    h1 span { color: var(--accent); }
+    .intro-row { max-width: 1050px; display: grid; grid-template-columns: 1fr 480px; gap: 60px; align-items: end; margin-top: 50px; }
+    .role { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: .02em; }
+    .intro { margin: 0; color: var(--muted); font-size: clamp(17px, 1.8vw, 21px); }
+
+    .companies { padding: 45px 0 72px; border-top: 1px solid var(--line); }
+    .section-label { margin: 0 0 28px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .logo-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); }
+    .logo { min-height: 150px; display: flex; align-items: center; justify-content: center; padding: 34px; border-right: 1px solid var(--line); background: var(--panel); }
+    .logo:last-child { border-right: 0; }
+    .logo img { display: block; max-width: 170px; max-height: 55px; width: auto; height: auto; }
+    .logo-afterpay img { width: 164px; }
+    .logo-ofx img { width: 135px; }
+    .logo-telekom img { height: 62px; }
+
+    .work { padding: 90px 0 110px; }
+    .work-heading { margin-bottom: 42px; }
+    h2 { max-width: 700px; margin: 0; font-size: clamp(42px, 6vw, 78px); font-weight: 650; line-height: .98; letter-spacing: -.055em; }
+    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .project { min-height: 320px; display: flex; align-items: end; padding: 34px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; transition: border-color 160ms ease, transform 160ms ease; }
+    .project:hover { border-color: #555; transform: translateY(-4px); }
+    .project h3 { max-width: 510px; margin: 0; font-size: clamp(38px, 5vw, 63px); font-weight: 600; line-height: .98; letter-spacing: -.055em; }
+
+    .close { padding: 110px 0; border-top: 1px solid var(--line); }
+    .close-grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: end; }
+    .close h2 { max-width: 780px; }
+    .close h2 span { color: var(--accent); }
+    .actions { display: flex; gap: 10px; }
+    .button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 11px 18px; border: 1px solid var(--line); font-size: 13px; font-weight: 800; text-decoration: none; transition: background 160ms ease, color 160ms ease; }
+    .button:hover { color: var(--black); background: var(--white); }
+    .button-primary { color: var(--black); background: var(--accent); border-color: var(--accent); }
+    .button-primary:hover { background: var(--white); border-color: var(--white); }
+
+    footer { padding: 26px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 24px; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { text-underline-offset: 3px; }
+
+    @media (max-width: 820px) {
+      .hero { min-height: 610px; padding: 82px 0 70px; }
+      .intro-row { grid-template-columns: 1fr; gap: 18px; }
+      .logo-grid { grid-template-columns: 1fr; }
+      .logo { min-height: 120px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .logo:last-child { border-bottom: 0; }
+      .projects { grid-template-columns: 1fr; }
+      .close-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(calc(100% - 28px), var(--max)); }
+      nav { min-height: 66px; }
+      .nav-links { gap: 15px; }
+      .nav-links a:first-child { display: none; }
+      .hero { min-height: 560px; }
+      h1 { font-size: clamp(57px, 20vw, 88px); }
+      .companies { padding-bottom: 50px; }
+      .work { padding: 66px 0 80px; }
+      .project { min-height: 250px; padding: 26px 22px; }
+      .close { padding: 80px 0; }
+      .actions { flex-direction: column; }
+      .footer-inner { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .project, .button { transition: none; }
+    }
+  </style>
 </head>
 <body>
-  <p>Opening the <a href="checkout-funnel-demo/">Checkout Funnel Demo</a>…</p>
-  <script>location.replace('checkout-funnel-demo/' + location.search + location.hash);</script>
+  <header>
+    <nav class="shell" aria-label="Primary navigation">
+      <a class="name" href="./">Vipin Vijayan</a>
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="resume/">Résumé</a>
+        <a class="contact-link" href="mailto:vipinvijayanis@gmail.com">Contact ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell hero-inner">
+        <p class="eyebrow">Product Lead &amp; Builder · Sydney</p>
+        <h1>Hi, I’m <span>Vipin.</span></h1>
+        <div class="intro-row">
+          <p class="role">FinTech · Consumer products · AI building</p>
+          <p class="intro">15+ years building consumer fintech products. Now building hands-on with AI.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="companies" aria-labelledby="companies-title">
+      <div class="shell">
+        <p class="section-label" id="companies-title">Built products with</p>
+        <div class="logo-grid">
+          <div class="logo logo-afterpay"><img src="assets/logos/afterpay.svg" alt="Afterpay"></div>
+          <div class="logo logo-ofx"><img src="assets/logos/ofx.svg" alt="OFX"></div>
+          <div class="logo logo-telekom"><img src="assets/logos/deutsche-telekom.svg" alt="Deutsche Telekom"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="work" id="work">
+      <div class="shell">
+        <div class="work-heading"><h2>Selected work.</h2></div>
+        <div class="projects">
+          <a class="project" href="checkout-funnel-demo/">
+            <h3>Checkout Funnel Intelligence</h3>
+          </a>
+          <a class="project" href="promo-code-demo/">
+            <h3>Promo Codes at Checkout</h3>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="shell close-grid">
+        <h2>Let’s build something <span>useful.</span></h2>
+        <div class="actions">
+          <a class="button button-primary" href="mailto:vipinvijayanis@gmail.com">Contact me ↗</a>
+          <a class="button" href="resume/">View résumé ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <span>© 2026 Vipin Vijayan</span>
+      <div class="footer-links">
+        <a href="https://au.linkedin.com/in/vipinvijayanis" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+        <a href="mailto:vipinvijayanis@gmail.com">Email ↗</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
