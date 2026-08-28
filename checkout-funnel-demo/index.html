@@ -136,21 +136,6 @@
   .split-amber { font-size: 11px; color: #e8d6a5; margin-top: 10px; padding: 6px 10px; background: #201b0a; border: 1px solid #b7791f; border-radius: 4px; line-height: 1.6; }
   .split-amber b { color: #f5e6b8; font-weight: 600; }
   .split-amber code { font-family: var(--font-mono); font-size: 10px; }
-  /* Initial-load overlay. Visible by default; init() hides it after render() runs. */
-  .loading-overlay { position: fixed; inset: 0; background: rgba(8,8,8,0.97); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-family: var(--font-mono); }
-  .loading-overlay[hidden] { display: none; }
-  .loading-overlay .loading-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
-  .loading-overlay .loading-sub { font-size: 12px; color: var(--text-muted); max-width: 480px; text-align: center; line-height: 1.6; }
-  .loading-overlay .loading-steps { font-size: 11px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 6px; min-width: 320px; }
-  .loading-overlay .loading-step { display: flex; align-items: center; gap: 8px; }
-  .loading-overlay .loading-step .dot { width: 8px; height: 8px; border-radius: 50%; background: #d4d4d4; flex-shrink: 0; transition: background .2s; }
-  .loading-overlay .loading-step.active .dot { background: var(--text); animation: pulseDot 1s ease-in-out infinite; }
-  .loading-overlay .loading-step.done .dot { background: #22c55e; }
-  .loading-overlay .loading-step.done { color: var(--text); }
-  @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .loading-bar { width: 320px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .loading-bar > div { height: 100%; width: 30%; background: var(--text); border-radius: 2px; animation: slideBar 1.4s ease-in-out infinite; }
-  @keyframes slideBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(420%); } }
   @media (max-width: 720px) {
     body { padding: 16px; }
     .portfolio-bar { margin: -16px 0 10px; }
@@ -174,16 +159,6 @@
     <p>I built an <strong>HTML-based dashboard</strong> that anyone in the company could access, keep current and shape around the questions the team needed to answer—without the visual limits of existing tools.</p>
   </div>
 </section>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-title">Loading Checkout Funnel Demo</div>
-  <div class="loading-bar"><div></div></div>
-  <div class="loading-steps">
-    <div class="loading-step" id="loadStepData"><span class="dot"></span><span>Session data (~111 MB)</span></div>
-    <div class="loading-step" id="loadStepRender"><span class="dot"></span><span>Building charts</span></div>
-  </div>
-  <div class="loading-sub">Sub-reason drill-down loads per-stage on click (~1-10 MB each) so the initial paint stays fast.</div>
-</div>
 
 <div class="demo-warning"><b>⚠️ DEMO — for representational purposes only.</b> Every figure on this dashboard is <b>synthetic dummy data</b> generated for illustration. Numbers do not reflect actual conversion rates, volumes, or any real customer, merchant, or company data — all sensitive data has been removed. Event markers, sub-reasons, and dates are illustrative examples. <b>Figures must not be quoted as actual company metrics.</b></div>
 <h1>Checkout Conversion Funnel — Demo</h1>
@@ -2442,13 +2417,6 @@ function toggleAllCash() {
   if (btn) btn.textContent = allExpanded ? 'Collapse All' : 'Expand All';
 }
 
-function setLoadStep(id, state) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove('active','done');
-  if (state) el.classList.add(state);
-}
-
 // Lazy per-stage sub-reasons loader. Each canonical funnel stage has its own
 // subreasons-recent-XX.json file. We fetch the one the user clicks into,
 // concatenate the rows into the shared subReasonData array, and re-render.
@@ -2504,10 +2472,8 @@ async function loadStageSubReasons(stage, opts = {}) {
 
 async function init() {
   const v = Date.now();
-  setLoadStep('loadStepData','active');
   const resp = await fetch('data-recent.json?v=' + v);
   rawData = await resp.json();
-  setLoadStep('loadStepData','done');
   // subReasonData stays null — populated lazily via loadStageSubReasons(stage)
   // when the user clicks a stage row or Expand All.
   try {
@@ -2574,17 +2540,7 @@ async function init() {
   });
 
   // cash-data.json is lazy-loaded by render() the first time cohort=Cash is selected.
-  setLoadStep('loadStepRender','active');
   await render();
-  setLoadStep('loadStepRender','done');
-  // Brief pause so users see the final "done" state, then fade overlay out.
-  setTimeout(() => {
-    const ov = document.getElementById('loadingOverlay');
-    if (!ov) return;
-    ov.style.transition = 'opacity 0.25s';
-    ov.style.opacity = '0';
-    setTimeout(() => { ov.hidden = true; }, 250);
-  }, 200);
 }
 
 init();
