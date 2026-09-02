@@ -86,7 +86,7 @@ letter-spacing: -0.05em to -0.07em;
 ### Header
 
 - Short landing pages may omit a standalone header when their sections and calls to action are already visible.
-- In that case, place at most two lightweight utility links—such as Résumé and LinkedIn—at the top-right of the hero.
+- In that case, place Résumé and LinkedIn as lightweight utility links at the top-right of the hero. One compact primary contact action may sit alongside them.
 - Longer project pages may retain a compact navigation header when it materially improves orientation.
 - Project pages should use relative links so they work locally and on GitHub Pages.
 
@@ -97,7 +97,8 @@ letter-spacing: -0.05em to -0.07em;
 - Supporting copy should normally be one or two concise sentences.
 - Keep role, focus areas and supporting profile copy together in one left-aligned hierarchy.
 - On the root page, use the hero to establish long-term product-launch expertise. Introduce hands-on AI work with the project section rather than repeating it in the hero.
-- A portrait may anchor the opposite side when it is monochrome, restrained and secondary to the headline. Align its top edge with the headline and fade it into the background rather than placing it inside a visible frame.
+- Let the root-page hero own the first viewport when space allows, so the introduction, portrait and employment proof read as one complete opening statement.
+- A portrait may occupy a quiet field above the opening statement or anchor its opposite side. Keep it monochrome, restrained and frameless so it supports the narrative hierarchy rather than behaving like a profile card.
 - Avoid pill collections, multiple hero buttons and repeated project metadata.
 - One accent-coloured word or phrase is enough.
 
@@ -135,7 +136,7 @@ letter-spacing: -0.05em to -0.07em;
 ### Contact and footer
 
 - Use email as the primary contact action.
-- Résumé and LinkedIn are secondary utility actions and may sit together at the top-right of the hero.
+- Résumé and LinkedIn are secondary utility actions and may sit with one compact primary contact action at the top-right of the hero.
 - Centre the closing statement and one primary contact action as a compact composition.
 - Frame the root-page closing as a hiring conversation, not a freelance-services pitch.
 - Keep the footer compact and centre the copyright line.
