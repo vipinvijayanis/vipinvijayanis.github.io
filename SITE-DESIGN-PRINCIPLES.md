@@ -51,6 +51,7 @@ All portfolio pages use the same base tokens:
 - Use `--white` for primary text and `--muted` for supporting text.
 - Use `--line` for quiet structure instead of shadows or heavy containers.
 - Use `--accent` for one or two high-value moments: the primary word in a hero, a key state, or the primary contact action.
+- Style calls to action as compact pill buttons. Use coral for the primary action, a restrained shadow and a subtle one-pixel lift on hover; keep content cards square and flat.
 - Company logos retain their official brand colours.
 - Do not introduce additional page-level accent colours without a clear semantic need.
 
