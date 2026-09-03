@@ -113,6 +113,7 @@ letter-spacing: -0.05em to -0.07em;
 ### Résumé
 
 - Keep the HTML résumé readable in the browser and provide one unobtrusive direct-download action for the repository-hosted PDF.
+- Use a compact, full-width utility header with a back link on the left and the résumé download action on the right.
 - Keep the PDF aligned with the visible HTML résumé whenever the résumé content changes.
 
 ### Project tiles
